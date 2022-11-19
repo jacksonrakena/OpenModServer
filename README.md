@@ -19,6 +19,7 @@ OpenModServer (OMS) is a new project aimed at creating an omnibus mod/plug-in di
     - Production (Install)
     - Staging
     - Testing
+  
 **Long-term:**
 - Support assembly validation/inspection of FFXIV and GTA 5 mods
 - Support more games and applications
