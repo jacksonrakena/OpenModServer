@@ -1,0 +1,18 @@
+﻿@page "/mods"
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Mods";
+}
+<h1>@ViewData["Title"]</h1>
+
+@foreach (var group in Model.ModListings)
+{
+    <h3>@group.Key</h3>
+    @foreach (var listing in group)
+    {
+        <div style="display: flex; flex-direction: column; border-radius: 25px; padding: 10px; border:  1px solid black;">
+            <div><a href=@($"/mods/{@listing.Id}")>@listing.Name</a> by @listing.Creator?.UserName</div>
+            <div>@listing.Description</div>
+        </div>
+    }
+}

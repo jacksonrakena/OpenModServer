@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>aspnet-OpenModServer.Web-9DC0C4E4-F327-4758-AD6A-7761A01811B5</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OpenModServer.Core\OpenModServer.Core.csproj" />
+    </ItemGroup>
+
+</Project>
