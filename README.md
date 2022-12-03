@@ -1,6 +1,34 @@
 # OpenModServer
 OpenModServer (OMS) is a new project aimed at creating an omnibus mod/plug-in distribution server for many different games.
 
+### Roadmap
+**Identity & Profiles**
+- [x] Support creating and logging in to user accounts
+- [ ] Support logging in with Google, Twitter, Discord, etc
+- [ ] Discord, YouTube links on profile
+- [ ] Profile page and profile picture support
+
+**Mods**
+- [x] Creating mods
+  - [x] Basic identifiers
+  - [ ] Screenshots/advertising material
+  - [ ] YouTube links
+- [ ] Deleting mods
+- [ ] Creating releases
+  - [ ] Upload management for releases
+  - [ ] Admin page to manage uploaded files
+  - [ ] VirusTotal scanning integration
+- [ ] Deleting/unapproving releases
+- [ ] Allow site moderators to approve releases
+
+**Distribution**
+- [x] Mod downloads over HTTP
+- [x] Dynamic publishers (Dalamud plugin source)
+- [ ] Appearance overhaul
+
+**Community**
+- [ ] Comments on mods
+- [ ] User forum
 ### Goals
 **Short-term:**  
 - Support uploading, managing, downloading, and acting as a plugin/mod repository for the following games/platforms:

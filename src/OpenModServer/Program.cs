@@ -55,4 +55,9 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapDefaultControllerRoute();
 
+var scope = app.Services.CreateScope();
+var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+ctx.Database.MigrateAsync().GetAwaiter().GetResult();
+ctx.Dispose();
+
 app.Run();
