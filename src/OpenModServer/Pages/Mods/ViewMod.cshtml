@@ -1,11 +1,17 @@
 ﻿@page "/mods/{id}"
+@using Microsoft.AspNetCore.Identity
 @using OpenModServer.Games
+@using OpenModServer.Games.Capabilities
+@using OpenModServer.Identity
 @model OpenModServer.Pages.Mod
 @inject GameManager GameManager
+@inject SignInManager<OmsUser> SignInManager
 
 @{
     ViewData["Title"] = Model.Listing.Name;
     var game = GameManager.Resolve(Model.Listing!.GameIdentifier);
+    var isOwner = SignInManager.IsSignedIn(User) && SignInManager.UserManager.GetUserId(User) == Model.Listing?.CreatorId.ToString();
+    var isOwnerOrAdmin = isOwner;
 }
 <h2>@Model.Listing?.Name</h2>
 <h6>Author: <a href=@Url.Page("User", new{id=@Model.Listing?.CreatorId})>@Model.Listing?.Creator.UserName</a></h6>
@@ -23,6 +29,10 @@
                 <th>Release Date</th>
                 <th>Download Count</th>
                 <th>Download</th>
+                @if (isOwnerOrAdmin)
+                {
+                    <th>Actions</th>
+                }
             </tr>
             </thead>
             <tbody>
@@ -35,21 +45,39 @@
                     <td>@release.CreatedAt.ToString("D")</td>
                     <td>@release.DownloadCount</td>
                     <td><a href=@($"/downloads/releases/{release.Id}")>Click</a></td>
+                    @if (isOwnerOrAdmin)
+                    {
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                        </td>
+                    }
                 </tr>
             }
             </tbody>
         </table>
     </div>
+    @if (isOwner)
+    {
+        <div style="margin-top: 20px;">
+            <button class="btn btn-info">Create new release</button>
+        </div>
+    }
 </div>
 
-<div style="margin-top: 20px;">
-    <h3>How to install</h3>
-    <div>
-        Add the following URL to your Dalamud plugin sources:
-        <br />
-        <code>
-            @GameManager.GeneratePublisherUrl(game, Model.HttpContext)
-        </code>
-        <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('hi')">Copy</button>
-    </div>
-</div>
+@if (GameManager.Resolve(Model.Listing.GameIdentifier) is IPublishable publishable)
+{
+    <div style="margin-top: 20px;">
+        @{
+            var url = GameManager.GeneratePublisherUrl(game, Model.HttpContext);
+        }
+        <h3>How to install</h3>
+        <div>
+            Add the following URL to your plugin sources:
+            <br/>
+            <code>
+                @url
+            </code>
+            <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('@url')">Copy</button>
+        </div>
+    </div>    
+}

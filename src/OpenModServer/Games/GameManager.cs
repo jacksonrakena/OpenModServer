@@ -13,6 +13,8 @@ public class GameManager
 
     public int Size() => _games.Count;
 
+    public IEnumerable<ISupportedGame> Games() => _games.Values;
+
     public ISupportedGame? Resolve(string name) => _games.GetValueOrDefault(name);
     public T? Resolve<T>(string name) where T : class, ISupportedGame => _games.GetValueOrDefault(name) as T;
 

@@ -25,6 +25,7 @@ builder.Services.Configure<OmsConfig>(builder.Configuration.GetSection("OpenModS
 // Register supported titles.
 var gameManager = new GameManager();
 gameManager.Register(new FinalFantasyXIVOnline());
+gameManager.Register(new GrandTheftAutoV());
 builder.Services.AddSingleton(gameManager);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDefaultIdentity<OmsUser>(options => options.SignIn.RequireConfirmedAccount = true)

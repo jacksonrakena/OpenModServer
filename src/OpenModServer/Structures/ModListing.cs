@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Identity;
@@ -19,12 +20,17 @@ public class ModListing
     public OmsUser Creator { get; set; }
     
     [Column("game_identifier")]
+    [DisplayName("Game")]
+    [DataType("game_selector")]
     public string GameIdentifier { get; set; }
     
     [MaxLength(128)]
+    [DisplayName("Name")]
     public string Name { get; set; }
     
     [MaxLength(2048)]
+    [DisplayName("Description")]
+    [DataType(DataType.MultilineText)]
     public string Description { get; set; }
     
     public DateTime CreatedAt { get; set; }
