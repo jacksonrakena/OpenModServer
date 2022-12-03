@@ -1,0 +1,55 @@
+﻿@page "/mods/{id}"
+@using OpenModServer.Games
+@model OpenModServer.Pages.Mod
+@inject GameManager GameManager
+
+@{
+    ViewData["Title"] = Model.Listing.Name;
+    var game = GameManager.Resolve(Model.Listing!.GameIdentifier);
+}
+<h2>@Model.Listing?.Name</h2>
+<h6>Author: <a href=@Url.Page("User", new{id=@Model.Listing?.CreatorId})>@Model.Listing?.Creator.UserName</a></h6>
+<div>@Model.Listing?.Description</div>
+
+<div style="margin-top: 20px;">
+    <h3>Releases</h3>
+    <div>
+        <table style="width:100%">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Release Date</th>
+                <th>Download Count</th>
+                <th>Download</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var release in Model.Listing?.Releases)
+            {
+                <tr>
+                    <td><a href=@($"/mods/{Model.Listing?.Id}/releases/{release.Id}")>@release.Name</a></td>
+                    <td>@release.ReleaseType</td>
+                    <td>@release.ApprovalHistory.OrderByDescending(d => d.CreatedAt).FirstOrDefault().CurrentState</td>
+                    <td>@release.CreatedAt.ToString("D")</td>
+                    <td>@release.DownloadCount</td>
+                    <td><a href=@($"/downloads/releases/{release.Id}")>Click</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <h3>How to install</h3>
+    <div>
+        Add the following URL to your Dalamud plugin sources:
+        <br />
+        <code>
+            @GameManager.GeneratePublisherUrl(game, Model.HttpContext)
+        </code>
+        <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('hi')">Copy</button>
+    </div>
+</div>

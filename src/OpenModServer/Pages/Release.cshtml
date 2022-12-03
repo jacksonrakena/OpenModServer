@@ -1,0 +1,25 @@
+﻿@page "/mods/{mod_id}/releases/{release_id}"
+@model OpenModServer.Pages.ReleaseModel
+
+
+<div>
+    <h3>Release @(Model.Release?.Id)</h3>
+    <div>
+        @(Model.Release?.Changelog)
+    </div>
+    <h3>Statistics</h3>
+    <div>
+        <div>Downloads: @(Model.Release?.DownloadCount)</div>
+        <div>Type: @(Model.Release?.ReleaseType)</div>
+    </div>
+    <h3>History</h3>
+    <ol>
+        @foreach (var change in Model.Release.ApprovalHistory.OrderByDescending(d => d.CreatedAt))
+        {
+            <li>@change.CreatedAt - changed from <i>@change.PreviousStatus</i> to <i>@change.CurrentState</i>, by @(change.ModeratorResponsibleId?.ToString() ?? "system")
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;Reason: @change.Reason
+            </li>
+        }
+    </ol>
+</div>

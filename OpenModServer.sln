@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenModServer.Core", "src\OpenModServer.Core\OpenModServer.Core.csproj", "{CA082912-D52F-4E27-9A23-3BAFEF7998EF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenModServer.Web", "src\OpenModServer.Web\OpenModServer.Web.csproj", "{CA1FC2C9-679C-4B98-85D5-50F95BB079F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenModServer", "src\OpenModServer\OpenModServer.csproj", "{CA1FC2C9-679C-4B98-85D5-50F95BB079F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,10 +8,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CA082912-D52F-4E27-9A23-3BAFEF7998EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA082912-D52F-4E27-9A23-3BAFEF7998EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA082912-D52F-4E27-9A23-3BAFEF7998EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA082912-D52F-4E27-9A23-3BAFEF7998EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CA1FC2C9-679C-4B98-85D5-50F95BB079F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CA1FC2C9-679C-4B98-85D5-50F95BB079F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA1FC2C9-679C-4B98-85D5-50F95BB079F7}.Release|Any CPU.ActiveCfg = Release|Any CPU

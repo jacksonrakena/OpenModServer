@@ -1,0 +1,17 @@
+﻿@page "/users/{id}"
+@using OpenModServer.Games
+@model OpenModServer.Pages.UserModel
+@inject GameManager GameManager
+@{
+    ViewData["Title"] = Model.User.UserName;
+}
+<h2>@Model.User.UserName's profile</h2>
+<div>
+    <h3>Mods</h3>
+    <ul>
+        @foreach (var mod in Model.Mods)
+        {
+            <li>@mod.Name (for @GameManager.Resolve(mod.GameIdentifier).Name)</li>
+        }
+    </ul>
+</div>

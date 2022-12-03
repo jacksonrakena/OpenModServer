@@ -1,0 +1,23 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@using OpenModServer.Identity
+@using OpenModServer.Structures
+@model IndexModel
+@inject OmsConfig Config
+@inject SignInManager<OmsUser>  SignInManager
+
+<h3>Welcome to @Config.Branding.Name</h3>
+@if (SignInManager.IsSignedIn(User))
+{
+    <p>Welcome @HttpContext.User.Identity?.Name.</p>
+}
+else
+{
+    <p>Try registering in the top right.</p>
+}
+<div>
+    This is an early-release site, and as such, many features are not implemented.
+</div>
+<div>
+    Try clicking the 'Mods' tab above.
+</div>
