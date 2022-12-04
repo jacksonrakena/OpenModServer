@@ -1,6 +1,6 @@
 ﻿using OpenModServer.Games.Capabilities;
 
-namespace OpenModServer.Games.FFXIV;
+namespace OpenModServer.Games.Builtin;
 
 public class GrandTheftAutoV : ISupportedGame
 {

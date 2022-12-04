@@ -1,0 +1,38 @@
+﻿@page "/mods/{mod_id}/releases/create"
+@using OpenModServer.Structures.Releases
+@model OpenModServer.Areas.Mods.Pages.Releases.CreateRelease
+
+<h3>Creating a new release</h3>
+<div>
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Type"></label>
+            <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<ModReleaseType>()">
+            </select>
+            <span asp-validation-for="Type" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Changelog"></label>
+            <textarea asp-for="Changelog" class="form-control"></textarea>
+            <span asp-validation-for="Changelog" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="UploadedFile">Upload file</label>
+            <input asp-for="UploadedFile" type="file" class="form-control" />
+            <span asp-validation-for="UploadedFile" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

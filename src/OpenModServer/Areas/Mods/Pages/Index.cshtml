@@ -1,0 +1,112 @@
+﻿@page "{id:guid?}"
+@inject GameManager GameManager
+@using Humanizer
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OpenModServer.Games
+@using OpenModServer.Games.Capabilities
+@using OpenModServer.Identity
+@using OpenModServer.Structures.Releases.Approvals
+@model OpenModServer.Areas.Mods.Pages.ViewAllModsModel
+@inject SignInManager<OmsUser> SignInManager
+@if (Model.Listing == null)
+{
+    ViewData["Title"] = "Mods";
+    
+    <h1>@ViewData["Title"]</h1>
+
+    foreach (var group in Model.ModListings)
+    {
+        <h3>@(GameManager.Resolve(group.Key)?.Name ?? group.Key)</h3>
+        @foreach (var listing in group)
+        {
+            <div style="display: flex; flex-direction: column; border-radius: 25px; padding: 10px; border:  1px solid black;">
+            <div><a asp-area="Mods" asp-page="/Index" asp-route-id="@listing.Id">@listing.Name</a> by @listing.Creator?.UserName</div>
+            <div>@listing.Description</div>
+            </div>
+        }
+    }   
+}
+else
+{
+    
+    ViewData["Title"] = Model.Listing.Name;
+    var game = GameManager.Resolve(Model.Listing!.GameIdentifier);
+    var isOwner = SignInManager.IsSignedIn(User) && SignInManager.UserManager.GetUserId(User) == Model.Listing?.CreatorId.ToString();
+    var isOwnerOrAdmin = isOwner;
+        <h2>@Model.Listing?.Name</h2>
+    <h6>Author: <a asp-area="Users" asp-page="/User" asp-route-id="@Model.Listing?.CreatorId">@Model.Listing?.Creator.UserName</a></h6>
+    <div>@Model.Listing?.Description</div>
+
+    <div style="margin-top: 20px;">
+    <h3>Releases</h3>
+    <div>
+        <table style="width:100%">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Release Date</th>
+                <th>Download Count</th>
+                <th>Download</th>
+                @if (isOwnerOrAdmin)
+                {
+                    <th>Actions</th>
+                }
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var release in Model.Listing?.Releases.OrderByDescending(d => d.CreatedAt))
+            {
+                <tr>
+                    <td><a asp-area="Mods" asp-page="/Releases/Release" asp-route-mod_id="@Model.Listing.Id" asp-route-release_id="@release.Id">@release.Name</a></td>
+                    <td>@release.ReleaseType</td>
+                    <td>@release.CurrentStatus.Humanize()</td>
+                    <td>@release.CreatedAt.ToString("D")</td>
+                    <td>@release.DownloadCount</td>
+                    @if (release.CurrentStatus == ModReleaseApprovalStatus.Approved)
+                    {
+                        <td><a asp-area="Downloads" asp-controller="Download" asp-action="DownloadReleaseById" asp-route-id="@release.Id">Click</a> (@release.FileSizeKilobytes KB)</td>     
+                    }
+                    else
+                    {
+                        <td>Unavailable</td>
+                    }
+                    @if (isOwnerOrAdmin)
+                    {
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                        </td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    @if (isOwner)
+    {
+        <div style="margin-top: 20px;">
+            <a asp-route-mod_id="@Model.Listing?.Id.ToString()" asp-area="Mods" asp-page="/Releases/CreateRelease" class="btn btn-info">Create new release</a>
+        </div>
+    }
+</div>
+
+@if (GameManager.Resolve(Model.Listing.GameIdentifier) is IPublishable publishable)
+{
+    <div style="margin-top: 20px;">
+        @{
+            var url = GameManager.GeneratePublisherUrl(game, Model.HttpContext);
+        }
+        <h3>How to install</h3>
+        <div>
+            Add the following URL to your plugin sources:
+            <br/>
+            <code>
+                @url
+            </code>
+            <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('@url')">Copy</button>
+        </div>
+    </div>    
+}
+}

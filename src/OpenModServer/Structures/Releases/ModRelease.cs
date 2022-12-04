@@ -32,8 +32,16 @@ public class ModRelease
     public DateTime CreatedAt { get; set; }
     
     public List<ModReleaseApprovalChange> ApprovalHistory { get; set; }
+
+    public ModReleaseApprovalStatus CurrentStatus { get; set; } = ModReleaseApprovalStatus.Unapproved;
     
     public string FilePath { get; set; }
     public string FileName { get; set; }
     public ulong FileSizeKilobytes { get; set; }
+
+    public void UpdateStatus(ModReleaseApprovalChange change)
+    {
+        ApprovalHistory.Add(change);
+        CurrentStatus = change.CurrentState;
+    }
 }

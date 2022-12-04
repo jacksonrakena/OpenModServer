@@ -1,14 +1,12 @@
 ﻿using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using OpenModServer.Data;
 using OpenModServer.Games.Capabilities;
 using OpenModServer.Structures.Releases;
+using OpenModServer.Structures.Releases.Approvals;
 
-namespace OpenModServer.Games.FFXIV;
+namespace OpenModServer.Games.Builtin;
 
 public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
 {
@@ -22,7 +20,6 @@ public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
         var mods = await db.ModListings
             .Include(d => d.Creator)
             .Include(d => d.Releases)
-            .ThenInclude(d => d.ApprovalHistory)
             .Where(e => e.GameIdentifier == Identifier)
             .ToListAsync();
 
@@ -30,14 +27,14 @@ public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
         foreach (var d in mods)
         {
             var orderedReleases = d.Releases
-                .OrderByDescending(d => d.CreatedAt).ToList(); 
+                .OrderByDescending(d => d.CreatedAt).Where(d => d.CurrentStatus == ModReleaseApprovalStatus.Approved).ToList(); 
             var latestProduction = orderedReleases.FirstOrDefault(d => d.ReleaseType == ModReleaseType.Production);
             if (latestProduction == null) continue;
             var latestTesting = orderedReleases.FirstOrDefault(d => d.ReleaseType == ModReleaseType.Testing); 
             var downloads = d.Releases.Sum(e => e.DownloadCount);
 
             var productionLink = linkGenerator.GetUriByAction(context, "DownloadReleaseById", "Download",
-                new { id = latestProduction.Id });
+                new { id = latestProduction.Id, Area="Downloads" });
             output.Add(new
             {
                 Author = d.Creator.UserName,
@@ -55,7 +52,7 @@ public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
                 DownloadCount = downloads,
                 DownloadLinkInstall = productionLink,
                 DownloadLinkTesting = latestTesting != null ? linkGenerator.GetUriByAction(context, "DownloadReleaseById", "Download",
-                    new { id = latestTesting.Id }) : productionLink,
+                    new { id = latestTesting.Id, Area="Downloads" }) : productionLink,
                 DownloadLinkUpdate = productionLink
             });
         }

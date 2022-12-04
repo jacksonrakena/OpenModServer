@@ -318,6 +318,9 @@ namespace OpenModServer.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<int>("CurrentStatus")
+                        .HasColumnType("integer");
+
                     b.Property<int>("DownloadCount")
                         .HasColumnType("integer")
                         .HasColumnName("download_count");
