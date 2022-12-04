@@ -71,6 +71,8 @@ if (discordConfig.Exists())
         discord.ClientSecret = discordConfig["ClientSecret"];
         discord.Scope.Add("email");
         discord.CallbackPath = "/signin-discord";
+        discord.CorrelationCookie.SameSite = SameSiteMode.Lax;
+        discord.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
     });
 }
 
