@@ -24,7 +24,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Pass through X-Forwarded-Host, for automatic publisher URL generation
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders = ForwardedHeaders.All;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
 // Add services for file management
