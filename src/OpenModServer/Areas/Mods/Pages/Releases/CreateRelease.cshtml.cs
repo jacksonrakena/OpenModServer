@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Data;
-using OpenModServer.Identity;
+using OpenModServer.Data.Identity;
+using OpenModServer.Data.Releases;
+using OpenModServer.Data.Releases.Approvals;
 using OpenModServer.Services;
-using OpenModServer.Structures.Releases;
-using OpenModServer.Structures.Releases.Approvals;
 
 namespace OpenModServer.Areas.Mods.Pages.Releases;
 

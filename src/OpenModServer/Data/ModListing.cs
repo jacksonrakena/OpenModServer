@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using OpenModServer.Identity;
-using OpenModServer.Structures.Releases;
+using OpenModServer.Data.Comments;
+using OpenModServer.Data.Identity;
+using OpenModServer.Data.Releases;
 
-namespace OpenModServer.Structures;
+namespace OpenModServer.Data;
 
 [Table("mod_listings"), Index(nameof(GameIdentifier))]
 public class ModListing
@@ -28,6 +29,10 @@ public class ModListing
     [DisplayName("Name")]
     public string Name { get; set; }
     
+    [MaxLength(128)]
+    [DisplayName("Tagline")]
+    public string Tagline { get; set; }
+    
     [MaxLength(2048)]
     [DisplayName("Description")]
     [DataType(DataType.MultilineText)]
@@ -35,6 +40,13 @@ public class ModListing
     
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+
+    [Column("download_count")] public int DownloadCount { get; set; } = 0;
     
     public List<ModRelease> Releases { get; set; }
+    
+    public List<ModComment> Comments { get; set; }
+    
+    public Guid? PinnedComment { get; set; }
+    public Guid? PinnedCommentId { get; set; }
 }

@@ -1,5 +1,7 @@
 ﻿@page
+@using OpenModServer.Services
 @model IndexModel
+@inject CountryService CountryService
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
@@ -7,23 +9,60 @@
 
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label"></label>
+<div class="d-flex flex-column" style="max-width: 60%">
+    <form id="profile-form" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div class="form-floating mb-3">
+            <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+            <label asp-for="Username" class="form-label"></label>
+        </div>
+        <div class="form-floating mb-3">
+            <input asp-for="Input.Website" class="form-control" />
+            <label asp-for="Input.Website" class="form-label"></label>
+            <span asp-validation-for="Input.Website" class="text-danger"></span>
+        </div>
+        <div class="form-floating mb-3">
+            <label asp-for="Input.TwitterUsername" class="form-label"></label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">https://twitter.com/</span>
+                </div>
+                <input class="form-control" asp-for="Input.TwitterUsername" />
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            <span asp-validation-for="Input.TwitterUsername" class="text-danger"></span>
+        </div>
+        
+        <div class="form-floating mb-3">
+            <label asp-for="Input.GitHubName" class="form-label"></label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">https://github.com/</span>
+                </div>
+                <input class="form-control" asp-for="Input.GitHubName" />
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
-    </div>
+            <span asp-validation-for="Input.GitHubName" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <div class="w-50 d-inline">
+                <label asp-for="Input.City" class="form-label"></label>
+                <input class="form-control" asp-for="Input.City" />
+            </div>
+            <div class="w-50 d-inline">
+                <label asp-for="Input.CountryIsoCode" class="form-label"></label>
+                <select asp-for="Input.CountryIsoCode" class="form-control">
+                    @foreach (var country in CountryService.Countries)
+                    {
+                        <option value="@country.IsoCode">@country.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+    </form>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

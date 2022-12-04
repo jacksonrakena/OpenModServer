@@ -1,0 +1,74 @@
+﻿@page
+@model OpenModServer.Areas.Admin.Pages.Files
+
+<div>
+    <h3>Moderation queue</h3>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>File name</th>
+            <th>Mod name</th>
+            <th>Release name</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var release in Model.ModerationQueue)
+            {
+                <form method="post">
+                    <input type="hidden" name="id" value="@release.Id" />
+                    <tr>
+                        <td>@release.Id</td>
+                        <td>@release.FileName (@release.FileSizeKilobytes KB)</td>
+                        <td>@release.ModListing.Name</td>
+                        <td>@release.Name</td>
+                        <td>@release.CurrentStatus</td>
+                        <td>
+                            <button asp-page-handler="HandleApproval" type="submit" class="btn-sm btn-success">Approve</button>
+                            <button asp-page-handler="HandleDeletion" type="submit" class="btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </form>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    <h3>All files</h3>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>File name</th>
+            <th>Mod name</th>
+            <th>Release name</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var release in Model.Releases)
+            {
+                <form method="post">
+                    <input type="hidden" name="id" value="@release.Id" />
+                    <tr>
+                        <td>@release.Id</td>
+                        <td>@release.FileName (@release.FileSizeKilobytes KB)</td>
+                        <td>@release.ModListing.Name</td>
+                        <td>@release.Name</td>
+                        <td>@release.CurrentStatus</td>
+                        <td><button asp-page-handler="HandleDeletion" class="btn-sm btn-danger">Delete</button></td>
+                    </tr>
+                </form>
+            }
+        </tbody>
+    </table>
+</div>

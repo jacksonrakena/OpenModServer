@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Data;
+using OpenModServer.Data.Releases;
+using OpenModServer.Data.Releases.Approvals;
 using OpenModServer.Games.Capabilities;
-using OpenModServer.Structures.Releases;
-using OpenModServer.Structures.Releases.Approvals;
 
 namespace OpenModServer.Games.Builtin;
 

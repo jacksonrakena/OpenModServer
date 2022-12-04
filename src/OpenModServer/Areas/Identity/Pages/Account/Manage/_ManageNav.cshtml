@@ -1,3 +1,4 @@
+@using OpenModServer.Data.Identity
 @inject SignInManager<OmsUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();

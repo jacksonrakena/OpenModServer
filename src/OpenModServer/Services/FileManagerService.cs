@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using OpenModServer.Data.Releases;
 using OpenModServer.Structures;
 
 namespace OpenModServer.Services;
@@ -36,6 +37,11 @@ public class FileManagerService
         }
 
         return new FileCreationResult(pathName, name, sizeKb);
+    }
+
+    public Task DeleteModReleaseAsync(ModRelease release)
+    {
+        return Task.Run(() => File.Delete(release.FilePath));
     }
 
     private string GenerateRandomFileName(IFormFile file)

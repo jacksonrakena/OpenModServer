@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Data;
-using OpenModServer.Structures.Releases;
+using OpenModServer.Data.Releases;
 
 namespace OpenModServer.Areas.Mods.Pages.Releases;
 

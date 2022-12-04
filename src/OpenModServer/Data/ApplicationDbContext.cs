@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using OpenModServer.Identity;
+using OpenModServer.Data.Comments;
+using OpenModServer.Data.Identity;
+using OpenModServer.Data.Releases;
+using OpenModServer.Data.Releases.Approvals;
 using OpenModServer.Structures;
-using OpenModServer.Structures.Releases;
-using OpenModServer.Structures.Releases.Approvals;
 
 namespace OpenModServer.Data;
 
@@ -13,6 +14,8 @@ public class ApplicationDbContext : IdentityDbContext<OmsUser, IdentityRole<Guid
     public DbSet<ModListing> ModListings { get; set; }
     public DbSet<ModReleaseApprovalChange> ApprovalChanges { get; set; }
     public DbSet<ModRelease> ModReleases { get; set; }
+    
+    public DbSet<ModComment> Comments { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -24,7 +27,10 @@ public class ApplicationDbContext : IdentityDbContext<OmsUser, IdentityRole<Guid
         builder.Entity<ModListing>().Property(b => b.CreatedAt).HasDefaultValueSql("now()");
         builder.Entity<ModRelease>().Property(b => b.CreatedAt).HasDefaultValueSql("now()");
         builder.Entity<ModListing>().HasOne(d => d.Creator);
-        builder.Entity<ModRelease>().HasOne(b => b.ModListing).WithMany(d => d.Releases);
+        builder.Entity<ModRelease>()
+            .HasOne(b => b.ModListing)
+            .WithMany(d => d.Releases)
+            .OnDelete(DeleteBehavior.Cascade);
         builder.Entity<ModReleaseApprovalChange>().Property(b => b.CreatedAt).HasDefaultValueSql("now()");
     }
 }

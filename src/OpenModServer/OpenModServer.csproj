@@ -25,6 +25,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
+        <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.9.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -45,10 +46,6 @@
       <Content Update="appsettings.secret.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Areas\Admin\Pages" />
     </ItemGroup>
 
 </Project>

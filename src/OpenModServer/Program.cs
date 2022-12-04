@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OpenModServer.Data;
+using OpenModServer.Data.Identity;
 using OpenModServer.Games;
 using OpenModServer.Games.Builtin;
-using OpenModServer.Identity;
 using OpenModServer.Services;
 using OpenModServer.Structures;
 
@@ -54,7 +54,10 @@ builder.Services.AddRazorPages();
 // Initialise identity, and auth services
 builder.Services
     .AddDefaultIdentity<OmsUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddSingleton<CountryService>();
 
 var authentication = builder.Services.AddAuthentication();
 
@@ -97,6 +100,7 @@ app.MapControllerRoute(name: "Area", pattern: "{area:exists}/{controller=Publish
 // Force migrate database, in case they forgor
 var scope = app.Services.CreateScope();
 scope.ServiceProvider.GetRequiredService<FileManagerService>();
+scope.ServiceProvider.GetRequiredService<CountryService>().Initialise();
 var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 ctx.Database.MigrateAsync().GetAwaiter().GetResult();
 ctx.Dispose();

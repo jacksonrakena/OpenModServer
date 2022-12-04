@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using OpenModServer.Identity;
+using OpenModServer.Data.Identity;
 
 namespace OpenModServer.Areas.Identity.Pages.Account
 {

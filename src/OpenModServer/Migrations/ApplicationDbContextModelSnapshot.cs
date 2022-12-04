@@ -156,7 +156,43 @@ namespace OpenModServer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OpenModServer.Identity.OmsUser", b =>
+            modelBuilder.Entity("OpenModServer.Data.Comments.ModComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("author_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(560)
+                        .HasColumnType("character varying(560)")
+                        .HasColumnName("content");
+
+                    b.Property<Guid>("ModListingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("listing_id");
+
+                    b.Property<Guid?>("ParentCommentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_comment_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("ModListingId");
+
+                    b.HasIndex("ParentCommentId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("OpenModServer.Data.Identity.OmsUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -165,8 +201,17 @@ namespace OpenModServer.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("City")
+                        .HasColumnType("text");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CountryIsoCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DiscordInviteCode")
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -175,6 +220,12 @@ namespace OpenModServer.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("FacebookPageName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GitHubName")
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -202,12 +253,21 @@ namespace OpenModServer.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
+                    b.Property<string>("SteamCommunityName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TwitterUsername")
+                        .HasColumnType("text");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -221,7 +281,7 @@ namespace OpenModServer.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.ModListing", b =>
+            modelBuilder.Entity("OpenModServer.Data.ModListing", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -242,12 +302,27 @@ namespace OpenModServer.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)");
 
+                    b.Property<int>("DownloadCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("download_count");
+
                     b.Property<string>("GameIdentifier")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("game_identifier");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<Guid?>("PinnedComment")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PinnedCommentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Tagline")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
@@ -264,7 +339,7 @@ namespace OpenModServer.Migrations
                     b.ToTable("mod_listings");
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.Releases.Approvals.ModReleaseApprovalChange", b =>
+            modelBuilder.Entity("OpenModServer.Data.Releases.Approvals.ModReleaseApprovalChange", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -297,10 +372,12 @@ namespace OpenModServer.Migrations
 
                     b.HasIndex("ModReleaseId");
 
+                    b.HasIndex("ModeratorResponsibleId");
+
                     b.ToTable("mod_release_approvals");
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.Releases.ModRelease", b =>
+            modelBuilder.Entity("OpenModServer.Data.Releases.ModRelease", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -345,6 +422,9 @@ namespace OpenModServer.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
+                    b.Property<Guid?>("OmsUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("ReleaseType")
                         .HasColumnType("integer")
                         .HasColumnName("release_type");
@@ -352,6 +432,8 @@ namespace OpenModServer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ModListingId");
+
+                    b.HasIndex("OmsUserId");
 
                     b.ToTable("mod_releases");
                 });
@@ -367,7 +449,7 @@ namespace OpenModServer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("OpenModServer.Identity.OmsUser", null)
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -376,7 +458,7 @@ namespace OpenModServer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("OpenModServer.Identity.OmsUser", null)
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -391,7 +473,7 @@ namespace OpenModServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OpenModServer.Identity.OmsUser", null)
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -400,17 +482,42 @@ namespace OpenModServer.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("OpenModServer.Identity.OmsUser", null)
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.ModListing", b =>
+            modelBuilder.Entity("OpenModServer.Data.Comments.ModComment", b =>
                 {
-                    b.HasOne("OpenModServer.Identity.OmsUser", "Creator")
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", "Author")
+                        .WithMany("Comments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenModServer.Data.ModListing", "Listing")
+                        .WithMany("Comments")
+                        .HasForeignKey("ModListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenModServer.Data.Comments.ModComment", "ParentComment")
                         .WithMany()
+                        .HasForeignKey("ParentCommentId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Listing");
+
+                    b.Navigation("ParentComment");
+                });
+
+            modelBuilder.Entity("OpenModServer.Data.ModListing", b =>
+                {
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", "Creator")
+                        .WithMany("Listings")
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -418,34 +525,55 @@ namespace OpenModServer.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.Releases.Approvals.ModReleaseApprovalChange", b =>
+            modelBuilder.Entity("OpenModServer.Data.Releases.Approvals.ModReleaseApprovalChange", b =>
                 {
-                    b.HasOne("OpenModServer.Structures.Releases.ModRelease", "ModRelease")
+                    b.HasOne("OpenModServer.Data.Releases.ModRelease", "ModRelease")
                         .WithMany("ApprovalHistory")
                         .HasForeignKey("ModReleaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", "ModeratorResponsible")
+                        .WithMany()
+                        .HasForeignKey("ModeratorResponsibleId");
+
                     b.Navigation("ModRelease");
+
+                    b.Navigation("ModeratorResponsible");
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.Releases.ModRelease", b =>
+            modelBuilder.Entity("OpenModServer.Data.Releases.ModRelease", b =>
                 {
-                    b.HasOne("OpenModServer.Structures.ModListing", "ModListing")
+                    b.HasOne("OpenModServer.Data.ModListing", "ModListing")
                         .WithMany("Releases")
                         .HasForeignKey("ModListingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OpenModServer.Data.Identity.OmsUser", null)
+                        .WithMany("Releases")
+                        .HasForeignKey("OmsUserId");
+
                     b.Navigation("ModListing");
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.ModListing", b =>
+            modelBuilder.Entity("OpenModServer.Data.Identity.OmsUser", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Listings");
+
                     b.Navigation("Releases");
                 });
 
-            modelBuilder.Entity("OpenModServer.Structures.Releases.ModRelease", b =>
+            modelBuilder.Entity("OpenModServer.Data.ModListing", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Releases");
+                });
+
+            modelBuilder.Entity("OpenModServer.Data.Releases.ModRelease", b =>
                 {
                     b.Navigation("ApprovalHistory");
                 });

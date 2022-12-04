@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using OpenModServer.Data.Identity;
 
-namespace OpenModServer.Structures.Releases.Approvals;
+namespace OpenModServer.Data.Releases.Approvals;
 
 [Table("mod_release_approvals")]
 public class ModReleaseApprovalChange
@@ -24,4 +25,5 @@ public class ModReleaseApprovalChange
     ///     If null, this was an automated system action.
     /// </summary>
     public Guid? ModeratorResponsibleId { get; set; }
+    public OmsUser? ModeratorResponsible { get; set; }
 }

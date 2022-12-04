@@ -6,10 +6,13 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OpenModServer.Identity;
+using Microsoft.EntityFrameworkCore;
+using OpenModServer.Data;
+using OpenModServer.Data.Identity;
 
 namespace OpenModServer.Areas.Identity.Pages.Account.Manage
 {
@@ -17,11 +20,14 @@ namespace OpenModServer.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<OmsUser> _userManager;
         private readonly SignInManager<OmsUser> _signInManager;
-
+        private readonly ApplicationDbContext _database;
+        
         public IndexModel(
             UserManager<OmsUser> userManager,
-            SignInManager<OmsUser> signInManager)
+            SignInManager<OmsUser> signInManager,
+            ApplicationDbContext db)
         {
+            _database = db;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -52,13 +58,28 @@ namespace OpenModServer.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
+
+            [DataType(DataType.Url)]
+            [Display(Name = "Website")]
+            [MaxLength(128)]
+            public string? Website { get; set; }
+            [MaxLength(128)]
+            
+            public string? FacebookPageName { get; set; }
+            [MaxLength(128)]
+            public string? TwitterUsername { get; set; }
+            [MaxLength(128)]
+            public string? SteamCommunityName { get; set; }
+            [MaxLength(128)]
+            public string? GitHubName { get; set; }
+            [MaxLength(128)]
+            public string? DiscordInviteCode { get; set; }
+            
+            [MaxLength(12)]
+            [Display(Name = "Country")]
+            public string? CountryIsoCode { get; set; }
+            [MaxLength(128)]
+            public string? City { get; set; }
         }
 
         private async Task LoadAsync(OmsUser user)
@@ -70,7 +91,14 @@ namespace OpenModServer.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                Website = user.Website,
+                TwitterUsername = user.TwitterUsername,
+                GitHubName = user.GitHubName,
+                DiscordInviteCode = user.DiscordInviteCode,
+                FacebookPageName = user.FacebookPageName,
+                SteamCommunityName = user.SteamCommunityName,
+                City = user.City,
+                CountryIsoCode = user.CountryIsoCode
             };
         }
 
@@ -100,16 +128,15 @@ namespace OpenModServer.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
-                }
-            }
+            _database.Users.Attach(user);
+            
+            user.GitHubName = this.Input.GitHubName;
+            user.Website = this.Input.Website;
+            user.TwitterUsername = Input.TwitterUsername;
+            user.CountryIsoCode = Input.CountryIsoCode;
+            user.City = Input.City;
+            
+            await _database.SaveChangesAsync();
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

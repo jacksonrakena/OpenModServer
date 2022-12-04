@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using OpenModServer.Structures.Releases.Approvals;
+using OpenModServer.Data.Releases.Approvals;
 
-namespace OpenModServer.Structures.Releases;
+namespace OpenModServer.Data.Releases;
 
 [Table("mod_releases")]
 public class ModRelease

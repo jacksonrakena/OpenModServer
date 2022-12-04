@@ -1,4 +1,4 @@
-﻿namespace OpenModServer.Structures.Releases;
+﻿namespace OpenModServer.Data.Releases;
 
 public enum ModReleaseType
 {

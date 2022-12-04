@@ -1,4 +1,4 @@
-﻿namespace OpenModServer.Structures.Releases.Approvals;
+﻿namespace OpenModServer.Data.Releases.Approvals;
 
 public enum ModReleaseApprovalStatus
 {

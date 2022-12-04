@@ -33,7 +33,12 @@ public class ViewAllModsModel : PageModel
             return Page();
         }
         
-        ModListings = await _database.ModListings.Include(e => e.Creator).GroupBy(d => d.GameIdentifier).ToListAsync();
+        ModListings = await _database.ModListings
+            .Include(e => e.Creator)
+            .OrderByDescending(t => t.DownloadCount)
+            .Take(50)
+            .GroupBy(d => d.GameIdentifier)
+            .ToListAsync();
         return Page();
     }
 }

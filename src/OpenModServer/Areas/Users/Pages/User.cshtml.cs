@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Areas.Mods.Pages;
 using OpenModServer.Data;
-using OpenModServer.Identity;
+using OpenModServer.Data.Identity;
 using OpenModServer.Structures;
 
 namespace OpenModServer.Areas.Users.Pages;

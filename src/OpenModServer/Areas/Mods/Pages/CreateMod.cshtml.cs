@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenModServer.Data;
-using OpenModServer.Identity;
+using OpenModServer.Data.Identity;
 using OpenModServer.Structures;
 
 namespace OpenModServer.Areas.Mods.Pages;
@@ -15,6 +15,7 @@ public class TransitiveModListing
      
     [MaxLength(128)]
     [DisplayName("Name")]
+    [Required]
     [BindProperty] public string Name { get; set; }
     
     [MaxLength(2048)]
@@ -23,8 +24,16 @@ public class TransitiveModListing
     [BindProperty] public string Description { get; set; }
     
     [DisplayName("Game")]
+    [Required]
     [DataType("game_selector")]
     [BindProperty] public string GameIdentifier { get; set; }   
+    
+        
+    [MaxLength(128)]
+    [DisplayName("Tagline")]
+    [Required]
+    [BindProperty]
+    public string Tagline { get; set; }
 }
 [Authorize]
 public class CreateMod : PageModel
@@ -49,6 +58,7 @@ public class CreateMod : PageModel
             Name = DataModel.Name,
             Description = DataModel.Description, 
             GameIdentifier = DataModel.GameIdentifier,
+            Tagline = DataModel.Tagline
         };
         _database.ModListings.Add(listing);
         await _database.SaveChangesAsync();
