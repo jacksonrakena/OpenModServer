@@ -1,23 +1,37 @@
 ﻿@page
+@using System.Diagnostics
+@using System.Reflection
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using OpenModServer.Data
 @using OpenModServer.Data.Identity
 @using OpenModServer.Structures
 @model IndexModel
 @inject OmsConfig Config
 @inject SignInManager<OmsUser>  SignInManager
+@inject ApplicationDbContext DbContext
 
 <h3>Welcome to @Config.Branding.Name</h3>
-@if (SignInManager.IsSignedIn(User))
-{
-    <p>Welcome @HttpContext.User.Identity?.Name.</p>
-}
-else
-{
-    <p>Try registering in the top right.</p>
-}
 <div>
     This is an early-release site, and as such, many features are not implemented.
 </div>
 <div>
     Try clicking the 'Mods' tab above.
+</div>
+<div style="margin-top:30px;">
+    Server information:
+    <ul>
+    @{
+        using var proc = Process.GetCurrentProcess();
+        <li>Runtime version: @Environment.Version</li>
+        <li>Start time: @proc.StartTime.ToString("s")</li>
+        <li>Request ID: @Request.HttpContext.TraceIdentifier</li>
+        <li>OMS version: @Assembly.GetEntryAssembly()?.FullName</li>
+        <li>Server: @Environment.MachineName (@Environment.OSVersion, tc64=@Environment.TickCount64)</li>
+        <li>Process: @Environment.ProcessPath (@Environment.ProcessId)</li>
+        <li>OS threads: @proc.Threads.Count</li>
+        <li>Memory: @(Environment.WorkingSet / 1000000) MB physical working set &bull; @(proc.PrivateMemorySize64 / 1000000) MB private</li>
+        <li>Database: @DbContext.Database.ProviderName (Supported=@DbContext.Database.IsNpgsql())</li>
+    }
+    </ul>
 </div>

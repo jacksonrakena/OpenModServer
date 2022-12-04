@@ -1,9 +1,0 @@
-﻿@page "/games"
-@using OpenModServer.Games
-@model OpenModServer.Pages.Games
-@inject GameManager GameManager
-
-<h2>Games</h2>
-<div>
-    This server has support for @GameManager.Size() game@(GameManager.Size() == 1 ? "" : "s").
-</div>

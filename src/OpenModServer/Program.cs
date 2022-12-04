@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
@@ -16,8 +17,14 @@ builder.Configuration.AddJsonFile("appsettings.secret.json");
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+
+// Configure database and memory cache.
+builder.Services.AddMemoryCache();
+builder.Services.AddDbContext<ApplicationDbContext>((services, database) =>
+{
+    database.UseNpgsql(connectionString);
+    database.UseMemoryCache(services.GetRequiredService<IMemoryCache>());
+});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -86,7 +93,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/error");
 }
 
 app.UseStaticFiles();
