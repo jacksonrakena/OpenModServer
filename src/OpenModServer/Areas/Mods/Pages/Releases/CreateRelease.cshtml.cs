@@ -77,7 +77,7 @@ public class CreateRelease : PageModel
                         {
                             PreviousStatus = ModReleaseApprovalStatus.Unapproved,
                             CurrentState = ModReleaseApprovalStatus.Unapproved,
-                            Reason = "Created by system"
+                            Reason = $"This upload was received automatically at {DateTime.Now.ToUniversalTime():O} with a file size of {file.SizeKilobytes}KB."
                         }
                     }
                 };
