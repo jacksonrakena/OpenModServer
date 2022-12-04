@@ -20,18 +20,45 @@
 </div>
 <div style="margin-top:30px;">
     Server information:
-    <ul>
     @{
         using var proc = Process.GetCurrentProcess();
-        <li>Runtime version: @Environment.Version</li>
-        <li>Start time: @proc.StartTime.ToString("s")</li>
-        <li>Request ID: @Request.HttpContext.TraceIdentifier</li>
-        <li>OMS version: @Assembly.GetEntryAssembly()?.FullName</li>
-        <li>Server: @Environment.MachineName (@Environment.OSVersion, tc64=@Environment.TickCount64)</li>
-        <li>Process: @Environment.ProcessPath (@Environment.ProcessId)</li>
-        <li>OS threads: @proc.Threads.Count</li>
-        <li>Memory: @(Environment.WorkingSet / 1000000) MB physical working set &bull; @(proc.PrivateMemorySize64 / 1000000) MB private</li>
-        <li>Database: @DbContext.Database.ProviderName (Supported=@DbContext.Database.IsNpgsql())</li>
+        <table class="table">
+            <tr>
+                <th>Runtime version</th>
+                <td>@Environment.Version</td>
+            </tr>
+            <tr>
+                <th>Start time</th>
+                <td>@proc.StartTime.ToString("s")</td>
+            </tr>
+            <tr>
+                <th>Request ID</th>
+                <td>@Request.HttpContext.TraceIdentifier</td>
+            </tr>
+            <tr>
+                <th>OMS version</th>
+                <td>@Assembly.GetEntryAssembly()?.FullName</td>
+            </tr>
+            <tr>
+                <th>Server</th>
+                <td>@Environment.MachineName (@Environment.OSVersion, tc64=@Environment.TickCount64)</td>
+            </tr>
+            <tr>
+                <th>Process</th>
+                <td>@Environment.ProcessPath (@Environment.ProcessId)</td>
+            </tr>
+            <tr>
+                <th>OS threads</th>
+                <td>@proc.Threads.Count</td>
+            </tr>
+            <tr>
+                <th>Memory</th>
+                <td>@(Environment.WorkingSet / 1000000) MB physical working set &bull; @(proc.PrivateMemorySize64 / 1000000) MB private</td>
+            </tr>
+            <tr>
+                <th>Database</th>
+                <td>@DbContext.Database.ProviderName (Supported=@DbContext.Database.IsNpgsql())</td>
+            </tr>
+        </table>
     }
-    </ul>
 </div>
