@@ -1,0 +1,37 @@
+﻿@page
+@model OpenModServer.Areas.Admin.Pages.Mods
+
+<div>
+    <h3>All listings</h3>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>Name</th>
+            <th>Game</th>
+            <th>Creator</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var release in Model.Listings)
+            {
+                <form method="post">
+                    <input type="hidden" name="id" value="@release.Id" />
+                    <tr>
+                        <td>@release.Id</td>
+                        <td>@release.Name</td>
+                        <td>@release.GameIdentifier</td>
+                        <td>@release.CreatorId</td>
+                        <td>
+                            <button asp-page-handler="HandleDeletion" type="submit" class="btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </form>
+            }
+        </tbody>
+    </table>
+</div>
