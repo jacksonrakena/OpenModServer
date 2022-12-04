@@ -59,7 +59,7 @@
     @if (isOwner)
     {
         <div style="margin-top: 20px;">
-            <button class="btn btn-info">Create new release</button>
+            <a href=@Url.Page("/Mods/Releases/CreateRelease", new{mod_id=Model.Listing?.Id.ToString()}) class="btn btn-info">Create new release</a>
         </div>
     }
 </div>

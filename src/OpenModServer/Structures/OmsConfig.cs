@@ -23,3 +23,14 @@ public class OmsConfigBranding
 {
     public string Name { get; set; }
 }
+
+public class OmsConfigExternalAuthentication
+{
+    public OmsConfigExternalAuthenticationKeyPair Discord { get; set; }
+}
+
+public class OmsConfigExternalAuthenticationKeyPair
+{
+    public string ClientId { get; set; }
+    public string ClientSecret { get; set; }
+}

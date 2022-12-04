@@ -10,6 +10,8 @@ using OpenModServer.Structures;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.secret.json");
+
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -29,8 +31,14 @@ gameManager.Register(new GrandTheftAutoV());
 builder.Services.AddSingleton(gameManager);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDefaultIdentity<OmsUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>(); 
 builder.Services.AddRazorPages();
+builder.Services.AddAuthentication().AddDiscord(discord =>
+{
+    var discordConfig = builder.Configuration.GetSection("OpenModServer").GetSection("ExternalAuthentication").GetSection("Discord");
+    discord.ClientId = discordConfig["ClientId"];
+    discord.ClientSecret = discordConfig["ClientSecret"];
+});
 builder.Services.AddTransient<OmsConfig>(i => i.GetRequiredService<IOptions<OmsConfig>>().Value);
 
 var app = builder.Build();
