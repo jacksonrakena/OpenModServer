@@ -59,6 +59,16 @@
                 <th>Database</th>
                 <td>@DbContext.Database.ProviderName (Supported=@DbContext.Database.IsNpgsql())</td>
             </tr>
+            <tr>
+                <th>Loaded assemblies</th>
+                <td>
+                    @AppDomain.CurrentDomain.GetAssemblies().Length<br />
+                    @foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        <span>@assembly.GetName().Name, Version=@assembly.GetName().Version <br/></span>
+                    }
+                </td>
+            </tr>
         </table>
     }
 </div>
