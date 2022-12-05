@@ -4,9 +4,9 @@ OpenModServer (OMS) is a new project aimed at creating an omnibus mod/plug-in di
 ### Roadmap
 **Identity & Profiles**
 - [x] Support creating and logging in to user accounts
-- [ ] Support logging in with Google, Twitter, Discord, etc
+- [x] Support logging in with Google, Twitter, Discord, etc
 - [ ] Discord, YouTube links on profile
-- [ ] Profile page and profile picture support
+- [x] Profile page and profile picture support
 
 **Mods**
 - [x] Creating mods
@@ -14,12 +14,12 @@ OpenModServer (OMS) is a new project aimed at creating an omnibus mod/plug-in di
   - [ ] Screenshots/advertising material
   - [ ] YouTube links
 - [ ] Deleting mods
-- [ ] Creating releases
-  - [ ] Upload management for releases
-  - [ ] Admin page to manage uploaded files
+- [x] Creating releases
+  - [x] Upload management for releases
+  - [x] Admin page to manage uploaded files
   - [ ] VirusTotal scanning integration
-- [ ] Deleting/unapproving releases
-- [ ] Allow site moderators to approve releases
+- [x] Deleting/unapproving releases
+- [x] Allow site moderators to approve releases
 
 **Distribution**
 - [x] Mod downloads over HTTP
