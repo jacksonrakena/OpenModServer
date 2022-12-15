@@ -15,11 +15,13 @@ public class TransitiveModListing
      
     [MaxLength(128)]
     [DisplayName("Name")]
+    [Display(Prompt = "My new mod")]
     [Required]
     [BindProperty] public string Name { get; set; }
     
     [MaxLength(2048)]
     [DisplayName("Description")]
+    [Display(Prompt = "Markdown formatting is supported.")]
     [DataType(DataType.MultilineText)]
     [BindProperty] public string Description { get; set; }
     
@@ -31,6 +33,7 @@ public class TransitiveModListing
         
     [MaxLength(128)]
     [DisplayName("Tagline")]
+    [Display(Prompt = "A short sentence used in the mod list.")]
     [Required]
     [BindProperty]
     public string Tagline { get; set; }

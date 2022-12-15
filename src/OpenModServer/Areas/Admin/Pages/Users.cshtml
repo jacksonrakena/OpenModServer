@@ -1,0 +1,31 @@
+﻿@page
+@model OpenModServer.Areas.Admin.Pages.Users
+
+<div>
+    <h3>All users</h3>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>Username</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.UserAccounts)
+            {
+                <form method="post">
+                    <input type="hidden" name="id" value="@user.Id" />
+                    <tr>
+                        <td>@user.Id</td>
+                        <td>@user.UserName</td>
+                        <td>@user.Email</td>
+                    </tr>
+                </form>
+            }
+        </tbody>
+    </table>
+</div>

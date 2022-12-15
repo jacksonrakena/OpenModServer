@@ -11,13 +11,14 @@
 @using Westwind.AspNetCore.Markdown
 @model OpenModServer.Areas.Mods.Pages.ViewAllModsModel
 @inject SignInManager<OmsUser> SignInManager
+@inject UserManager<OmsUser> UserManager
 
 <style>
     .card:hover {
         background-color: #f5f5f5;
     }
 </style>
-
+<link rel="stylesheet" href="~/@(nameof(Index)).styles.css" />
 @if (Model.Listing == null)
 {
     ViewData["Title"] = "Mods";
@@ -40,16 +41,13 @@
 }
 else
 {
-    
     ViewData["Title"] = Model.Listing.Name;
     var game = GameManager.Resolve(Model.Listing!.GameIdentifier);
     var isOwner = SignInManager.IsSignedIn(User) && SignInManager.UserManager.GetUserId(User) == Model.Listing?.CreatorId.ToString();
     var isOwnerOrAdmin = isOwner;
         <h2>@Model.Listing?.Name</h2>
-    <h6>Author: <a asp-area="Users" asp-page="/User" asp-route-id="@Model.Listing?.CreatorId">@Model.Listing?.Creator.UserName</a></h6>
-    <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(@Model.Listing?.Description)))</div>
-                    
-    
+
+
     var latestProductionApprovedRelease = Model.Listing?.Releases
         .OrderByDescending(d => d.CreatedAt)
         .FirstOrDefault(d => d.CurrentStatus == ModReleaseApprovalStatus.Approved);
@@ -61,66 +59,117 @@ else
             </a>
         </div>
     }
+    
+    <div style="margin-top: 20px;" class="container">
+        <div class="row">
+            <div class="col-4">
+                <div class="border rounded p-2 d-flex flex-row">
+                    <img class="rounded" src="@($"https://www.gravatar.com/avatar/{Model.Listing.Creator.GenerateMd5EmailHash()}")" width="50px" height="50px" />
+                    <a class="ms-2" asp-area="Users" asp-page="/User" asp-route-id="@Model.Listing?.CreatorId">@Model.Listing?.Creator.UserName</a>
+                </div>
+                <h3>Releases</h3>
+                <div>
+                    @foreach (var release in Model.Listing?.Releases.OrderByDescending(d => d.CreatedAt))
+                    {
+                        <div class="rounded border mb-2 p-2">
+                            <div class="d-flex flex-row justify-content-between">
+                                <div>
+                                    <div>@release.Name (@release.ReleaseType)</div>
+                                    <div class="fs-6">@release.DownloadCount downloads, @release.FileSizeKilobytes KB</div>
+                                    <div class="fs-6">@release.CreatedAt.Humanize(null, DateTime.Now)</div>
+                                </div>
+                                <div>
+                                    @if (release.CurrentStatus == ModReleaseApprovalStatus.Approved)
+                                    {
+                                        <div><a asp-area="Downloads" asp-controller="Download" asp-action="DownloadReleaseById" asp-route-id="@release.Id">Download</a></div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @if (isOwner)
+                {
+                    <div style="margin-top: 20px;">
+                        <a asp-route-mod_id="@Model.Listing?.Id.ToString()" asp-area="Mods" asp-page="/Releases/CreateRelease" class="btn btn-info">Create new release</a>
+                    </div>
+                }
+            </div>
+            <div class="col-8">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#description">Description</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#comments">Comments</a>
+                    </li>
+                </ul>
+                <div class="tab-content mt-3" id="tab-content">
+                    <div class="tab-pane fade show active" id="description">
+                        @(new HtmlString(new MarkdownParserMarkdig().Parse(@Model.Listing?.Description)))
+                    </div>
+                    <div class="tab-pane fade " id="comments">
 
-    <div style="margin-top: 20px;">
-    <h3>Releases</h3>
-    <div>
-        <table style="width:100%">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                @if (isOwnerOrAdmin)
-                {
-                    <th>Status</th>   
-                }
-                <th>Release Date</th>
-                <th>Download Count</th>
-                <th>Download</th>
-                @if (isOwnerOrAdmin)
-                {
-                    <th>Actions</th>
-                }
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var release in Model.Listing?.Releases.OrderByDescending(d => d.CreatedAt))
-            {
-                <tr>
-                    <td><a asp-area="Mods" asp-page="/Releases/Release" asp-route-mod_id="@Model.Listing.Id" asp-route-release_id="@release.Id">@release.Name</a></td>
-                    <td>@release.ReleaseType</td>
-                    @if (isOwnerOrAdmin)
-                    {                    
-                        <td>@release.CurrentStatus.Humanize()</td>
-                    }
-                    <td>@release.CreatedAt.ToString("D")</td>
-                    <td>@release.DownloadCount</td>
-                    @if (release.CurrentStatus == ModReleaseApprovalStatus.Approved)
-                    {
-                        <td><a asp-area="Downloads" asp-controller="Download" asp-action="DownloadReleaseById" asp-route-id="@release.Id">Click</a> (@release.FileSizeKilobytes KB)</td>     
-                    }
-                    else
-                    {
-                        <td>Unavailable</td>
-                    }
-                    @if (isOwnerOrAdmin)
-                    {
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                        </td>
-                    }
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-    @if (isOwner)
-    {
-        <div style="margin-top: 20px;">
-            <a asp-route-mod_id="@Model.Listing?.Id.ToString()" asp-area="Mods" asp-page="/Releases/CreateRelease" class="btn btn-info">Create new release</a>
+                        @if (Model.Listing.Comments.FirstOrDefault(d => d.Id == Model.Listing.PinnedCommentId) is {} pinnedComment)
+                        {
+                            <div class="d-flex flex-row border border-success rounded p-2 mb-3">
+                                <img class="rounded" src="@($"https://www.gravatar.com/avatar/{pinnedComment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@pinnedComment.Author.UserName"/>
+                                <div class="ms-2">
+                                    <div class="d-flex flex-row">
+                                        <a class="comment-author-title" asp-route-id="@pinnedComment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
+                                            @pinnedComment.Author.UserName
+                                        </a>
+                                        <span class="ms-2 badge bg-success">Pinned</span>
+                                        @if (pinnedComment.AuthorId == Model.Listing.CreatorId)
+                                        {
+                                            <span class="ms-2 badge bg-info">Author</span>
+                                        }
+                                    </div>
+                                    <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(pinnedComment.Content)))</div>
+                                </div>
+                            </div>
+                        }
+                        @foreach (var comment in Model.Listing.Comments.Where(d => d.Id != Model.Listing.PinnedCommentId))
+                        {
+                            <div class="d-flex flex-row border rounded p-2 mb-2">
+                                <img class="rounded" src="@($"https://www.gravatar.com/avatar/{comment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@comment.Author.UserName"/>
+                                <div class="ms-2">
+                                    <div class="d-flex flex-row">
+                                        <a class="comment-author-title" asp-route-id="@comment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
+                                            @comment.Author.UserName
+                                        </a>
+                                        @if (comment.AuthorId == Model.Listing.CreatorId)
+                                        {
+                                            <span class="ms-2 badge bg-info">Author</span>
+                                        }
+                                    </div>
+                                    <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(comment.Content)))</div>
+                                </div>
+                            </div>
+                        }
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            var user = await UserManager.GetUserAsync(User);
+                            if (user != null)
+                            {
+                                <div class="d-flex flex-row w-100">
+                                    <img class="rounded" src="@($"https://www.gravatar.com/avatar/{user.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@user.UserName"/>
+                                    <div class="ms-2">
+                                        <form method="post">
+                                            <input type="hidden" name="modId" value="@Model.Listing.Id" />
+                                            <textarea name="comment" class="form-control mb-2" placeholder="Post a new comment..."></textarea>
+                                            <button asp-page-handler="CreateComment" type="submit" class="btn btn-success">Post</button>
+                                        </form>
+                                    </div>
+                                </div> 
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
-    }
-</div>
+
+    </div>
 
 @if (GameManager.Resolve(Model.Listing.GameIdentifier) is IPublishable publishable)
 {

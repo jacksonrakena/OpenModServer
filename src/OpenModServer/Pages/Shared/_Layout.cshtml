@@ -1,4 +1,5 @@
-﻿@inject IConfiguration config
+﻿@using OpenModServer.Structures
+@inject IConfiguration config
 @{
     var name = config.GetSection("OpenModServer").GetSection("Branding")["Name"];
     ViewData["Name"] = name;
@@ -56,6 +57,13 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3">
+        @if (TempData.GetJson<TemporaryAlert>("Alert") is { } tempAlert)
+        {
+            <div class="@($"alert alert-{tempAlert.Type.ToString("F").ToLower()}")" role="alert">
+                <h4 class="alert-heading">@tempAlert.Name</h4>
+                <p>@tempAlert.Text</p>
+            </div>   
+        }
         @RenderBody()
     </main>
 </div>

@@ -4,26 +4,33 @@
 @inject GameManager GameManager
 
 <div>
+    <h3>Create a new mod</h3>
+    <div>
+        This form will create a new mod.
+        <br />
+        <br />
+        To upload files, you will need to create a new release in your newly-created mod.
+    </div>
     <form method="post">
         <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="DataModel.Name"></label>
-            <input asp-for="DataModel.Name" class="form-control" />
+        <div class="mb-3">
+            <label asp-for="DataModel.Name" class="form-label"></label>
+            <input asp-for="DataModel.Name" class="form-control"/>
             <span asp-validation-for="DataModel.Name" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="DataModel.Description"></label>
+        <div class="mb-3">
+            <label asp-for="DataModel.Description" class="form-label"></label>
             <textarea asp-for="DataModel.Description" class="form-control"></textarea>
             <span asp-validation-for="DataModel.Description" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="DataModel.Tagline"></label>
-            <input asp-for="DataModel.Tagline" class="form-control" />
+        <div class="mb-3">
+            <label asp-for="DataModel.Tagline" class="form-label"></label>
+            <input asp-for="DataModel.Tagline" class="form-control"/>
             <span asp-validation-for="DataModel.Tagline" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="DataModel.GameIdentifier"></label>
-            <select class="form-control" asp-for="DataModel.GameIdentifier">
+        <div class="mb-3">
+            <label asp-for="DataModel.GameIdentifier" class="form-label"></label>
+            <select class="form-select" asp-for="DataModel.GameIdentifier">
                 @foreach (var game in GameManager.Games())
                 {
                     <option value=@game.Identifier>@game.Name</option>
@@ -31,8 +38,8 @@
             </select>
             <span asp-validation-for="DataModel.GameIdentifier" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
+        <div class="mb-3">
+            <input type="submit" value="Create" class="btn btn-primary"/>
         </div>
     </form>
 </div>

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using OpenModServer.Data.Identity;
 using OpenModServer.Data.Releases;
 using OpenModServer.Data.Releases.Approvals;
 using OpenModServer.Services;
+using OpenModServer.Structures;
 
 namespace OpenModServer.Areas.Mods.Pages.Releases;
 
@@ -31,6 +33,11 @@ public class CreateRelease : PageModel
     [BindProperty]
     [Required]
     public IFormFile UploadedFile { get; set; }
+    
+    [BindProperty]
+    [Required]
+    [RegularExpression("(True|true)", ErrorMessage = "You must agree to the User Agreement.")]
+    public bool AgreementChecked { get; set; }
 
     private readonly FileManagerService _fileManager;
     private readonly ApplicationDbContext _database;
@@ -71,19 +78,14 @@ public class CreateRelease : PageModel
                     FilePath = file.Path,
                     FileSizeKilobytes = file.SizeKilobytes,
                     ReleaseType = Type,
-                    ApprovalHistory = new List<ModReleaseApprovalChange>
-                    {
-                        new()
-                        {
-                            PreviousStatus = ModReleaseApprovalStatus.Unapproved,
-                            CurrentState = ModReleaseApprovalStatus.Unapproved,
-                            Reason = $"This upload was received automatically at {DateTime.Now.ToUniversalTime():O} with a file size of {file.SizeKilobytes}KB."
-                        }
-                    }
+                    CurrentStatus = ModReleaseApprovalStatus.Unapproved
                 };
                 _database.ModReleases.Add(release);
                 await _database.SaveChangesAsync();
-                return RedirectToPage("/Index", new { id = modId, area="Mods"});
+                TempData.PutJson("Alert", new TemporaryAlert(TemporaryAlertType.Success,
+                    "Release created",
+                    "Congratulations on posting a new release. Once approved, it will be available for users to download."));
+                return RedirectToPage($"/Index", new { id = modId, area="Mods"});
             } else return Page();
         }
         else return Page();
