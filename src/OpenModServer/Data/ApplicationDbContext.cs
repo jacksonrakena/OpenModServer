@@ -24,6 +24,8 @@ public class ApplicationDbContext : IdentityDbContext<OmsUser, IdentityRole<Guid
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<ModListing>().Property(d => d.Tags).HasDefaultValue(new List<string>());
+        builder.Entity<ModListing>().HasIndex(b => b.Tags).HasMethod("gin");
         builder.Entity<ModListing>().Property(b => b.CreatedAt).HasDefaultValueSql("now()");
         builder.Entity<ModRelease>().Property(b => b.CreatedAt).HasDefaultValueSql("now()");
         builder.Entity<ModListing>().HasOne(d => d.Creator);

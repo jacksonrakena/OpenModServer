@@ -30,6 +30,12 @@ public class TransitiveModListing
     [DataType("game_selector")]
     [BindProperty] public string GameIdentifier { get; set; }   
     
+    [DisplayName("Tags")]
+    [MaxLength(64)]
+    [Display(Prompt = "Separate by commas, i.e. 'fun, difficult, challenge'")]
+    [BindProperty]
+    public string Tags { get; set; }
+    
         
     [MaxLength(128)]
     [DisplayName("Tagline")]
@@ -63,6 +69,15 @@ public class CreateMod : PageModel
             GameIdentifier = DataModel.GameIdentifier,
             Tagline = DataModel.Tagline
         };
+        if (!string.IsNullOrWhiteSpace(DataModel.Tags))
+        {
+            listing.Tags = DataModel.Tags
+                .Split(",")
+                .Select(e=>e.Trim())
+                .Where(d => !string.IsNullOrWhiteSpace(d))
+                .Distinct()
+                .ToList();
+        }
         _database.ModListings.Add(listing);
         await _database.SaveChangesAsync();
         return RedirectToPage("/Mods/Mods");

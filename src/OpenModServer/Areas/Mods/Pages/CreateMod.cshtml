@@ -1,4 +1,5 @@
 ﻿@page "/mods/create"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OpenModServer.Games
 @model OpenModServer.Areas.Mods.Pages.CreateMod
 @inject GameManager GameManager
@@ -19,14 +20,19 @@
             <span asp-validation-for="DataModel.Name" class="text-danger"></span>
         </div>
         <div class="mb-3">
+            <label asp-for="DataModel.Tagline" class="form-label"></label>
+            <input asp-for="DataModel.Tagline" class="form-control"/>
+            <span asp-validation-for="DataModel.Tagline" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
             <label asp-for="DataModel.Description" class="form-label"></label>
             <textarea asp-for="DataModel.Description" class="form-control"></textarea>
             <span asp-validation-for="DataModel.Description" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="DataModel.Tagline" class="form-label"></label>
-            <input asp-for="DataModel.Tagline" class="form-control"/>
-            <span asp-validation-for="DataModel.Tagline" class="text-danger"></span>
+            <label asp-for="DataModel.Tags" class="form-label"></label>
+            <input asp-for="DataModel.Tags" class="form-control"></input>
+            <span asp-validation-for="DataModel.Tags" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="DataModel.GameIdentifier" class="form-label"></label>
