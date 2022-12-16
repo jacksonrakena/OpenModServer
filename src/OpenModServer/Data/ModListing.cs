@@ -47,6 +47,11 @@ public class ModListing
     
     public List<ModComment> Comments { get; set; }
     
+    
     public Guid? PinnedComment { get; set; }
+    
     public Guid? PinnedCommentId { get; set; }
+    
+    [Column("tags")]
+    public List<string> Tags { get; set; } = new List<string>();
 }
