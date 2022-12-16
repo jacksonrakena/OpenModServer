@@ -1,0 +1,16 @@
+﻿@page "/games/{id?}"
+@model OpenModServer.Areas.Games.Pages.Index
+
+@if (Model.Game != null)
+{
+    <h3>@Model.Game.Name</h3>
+    <div>@Model.Game.Description</div>
+    <div class="mt-1 row row-cols-1 row-cols-md-3 g-4">                        
+    @foreach (var mod in Model.Mods)
+    {
+        <div class="col">
+            @await Component.InvokeAsync("ListingCard", mod)
+        </div>
+    }
+    </div>
+}

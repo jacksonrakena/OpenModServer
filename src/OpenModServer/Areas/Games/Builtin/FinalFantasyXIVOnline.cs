@@ -13,6 +13,9 @@ public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
     public string Identifier => "ff14d";
     public string Name => "Final Fantasy XIV Online (Dalamud)";
 
+    public string Description =>
+        "Final Fantasy XIV is a massively multiplayer online role-playing game (MMORPG) developed and published by Square Enix.";
+
     public async Task<IActionResult> GetPublisherAsync(HttpContext context)
     {
         var linkGenerator = context.RequestServices.GetRequiredService<LinkGenerator>();
