@@ -1,0 +1,27 @@
+﻿@page "/tags/{id}"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OpenModServer.Games
+@model OpenModServer.Areas.Mods.Pages.Tags.ViewTag
+@inject GameManager GameManager
+
+<h3>Mods tagged with '@Model.Name'</h3>
+@foreach (var group in Model.ModListings)
+{
+    <h4>@GameManager.Resolve(group.Key)!.Name</h4>
+    @foreach (var mod in group)
+    {
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <a asp-area="Mods" asp-page="/Index" asp-route-id="@mod.Id" style="text-decoration: none; color: unset" class="card-body stretched-link">
+                <h5 class="card-title">@mod.Name</h5>
+                <p class="card-text">@mod.Tagline</p>
+                <div>
+                    @foreach (var tag in mod.Tags)
+                    {
+                        <span class="badge bg-primary">@tag</span>
+                    }
+                </div>
+            </a>
+        </div>
+    }
+}
