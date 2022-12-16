@@ -1,4 +1,5 @@
 ﻿@page "/users/{id}"
+@using Humanizer
 @using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OpenModServer.Games
@@ -43,11 +44,16 @@
         {
             <div class="d-flex flex-row border rounded p-2 mb-2">
                 <img class="rounded" src="@($"https://www.gravatar.com/avatar/{comment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@comment.Author.UserName"/>
-                <div class="ms-2">
-                    <div class="d-flex flex-row">
-                        <a class="comment-author-title" asp-route-id="@comment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
-                            @comment.Author.UserName
-                        </a>
+                <div class="ms-2 w-100">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div>
+                            <a class="comment-author-title" asp-route-id="@comment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
+                                @comment.Author.UserName
+                            </a> on <a asp-area="Mods" asp-page="/Index" asp-route-id="@comment.ModListingId">@comment.Listing.Name</a>  
+                        </div>
+                        <div class="text-muted">
+                            @comment.CreatedAt.Humanize()
+                        </div>
                     </div>
                     <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(comment.Content)))</div>
                 </div>

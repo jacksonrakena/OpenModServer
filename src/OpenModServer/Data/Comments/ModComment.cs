@@ -23,4 +23,10 @@ public class ModComment
     [Column("parent_comment_id")]
     public Guid? ParentCommentId { get; set; }
     public ModComment? ParentComment { get; set; }
+    
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
+    
+    [Column("updated_at")]
+    public DateTime? UpdatedAt { get; set; }
 }

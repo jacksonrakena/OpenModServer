@@ -29,7 +29,12 @@ public class UserModel : PageModel
         if (user == null) return NotFound();
         User = user;
         Mods = await _database.ModListings.Where(d => d.CreatorId == guid).ToListAsync();
-        Comments = await _database.Comments.Include(d => d.Listing).Where(d => d.AuthorId == guid).Take(20).ToListAsync();
+        Comments = await _database.Comments
+            .OrderByDescending(d => d.CreatedAt)
+            .Include(d => d.Listing)
+            .Where(d => d.AuthorId == guid)
+            .Take(20)
+            .ToListAsync();
         return Page();
     }
 }

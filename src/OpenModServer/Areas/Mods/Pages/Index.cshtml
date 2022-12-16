@@ -163,16 +163,21 @@ else
                         {
                             <div class="d-flex flex-row border border-success rounded p-2 mb-3">
                                 <img class="rounded" src="@($"https://www.gravatar.com/avatar/{pinnedComment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@pinnedComment.Author.UserName"/>
-                                <div class="ms-2">
-                                    <div class="d-flex flex-row">
-                                        <a class="comment-author-title" asp-route-id="@pinnedComment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
-                                            @pinnedComment.Author.UserName
-                                        </a>
-                                        <span class="ms-2 badge bg-success">Pinned</span>
-                                        @if (pinnedComment.AuthorId == Model.Listing.CreatorId)
-                                        {
-                                            <span class="ms-2 badge bg-info">Author</span>
-                                        }
+                                <div class="ms-2 w-100">
+                                    <div class="d-flex flex-row justify-content-between">
+                                        <div>
+                                            <a class="comment-author-title" asp-route-id="@pinnedComment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
+                                                @pinnedComment.Author.UserName
+                                            </a>
+                                            <span class="ms-2 badge bg-success">Pinned</span>
+                                            @if (pinnedComment.AuthorId == Model.Listing.CreatorId)
+                                            {
+                                                <span class="ms-2 badge bg-info">Author</span>
+                                            }
+                                        </div>
+                                        <div class="text-muted">
+                                            @pinnedComment.CreatedAt.Humanize()
+                                        </div>
                                     </div>
                                     <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(pinnedComment.Content)))</div>
                                 </div>
@@ -182,15 +187,20 @@ else
                         {
                             <div class="d-flex flex-row border rounded p-2 mb-2">
                                 <img class="rounded" src="@($"https://www.gravatar.com/avatar/{comment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@comment.Author.UserName"/>
-                                <div class="ms-2">
-                                    <div class="d-flex flex-row">
-                                        <a class="comment-author-title" asp-route-id="@comment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
-                                            @comment.Author.UserName
-                                        </a>
-                                        @if (comment.AuthorId == Model.Listing.CreatorId)
-                                        {
-                                            <span class="ms-2 badge bg-info">Author</span>
-                                        }
+                                <div class="ms-2 w-100">
+                                    <div class="d-flex flex-row justify-content-between">
+                                        <div>
+                                            <a class="comment-author-title" asp-route-id="@comment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
+                                                @comment.Author.UserName
+                                            </a>
+                                            @if (comment.AuthorId == Model.Listing.CreatorId)
+                                            {
+                                                <span class="ms-2 badge bg-info">Author</span>
+                                            }
+                                        </div>
+                                        <div class="text-muted">
+                                            @comment.CreatedAt.Humanize()
+                                        </div>
                                     </div>
                                     <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(comment.Content)))</div>
                                 </div>
