@@ -29,8 +29,8 @@
                         <td>@release.Name</td>
                         <td>@release.CurrentStatus</td>
                         <td>
-                            <button asp-page-handler="HandleApproval" type="submit" class="btn-sm btn-success">Approve</button>
-                            <button asp-page-handler="HandleDeletion" type="submit" class="btn-sm btn-danger">Delete</button>
+                            <a asp-area="Admin" asp-page="ApprovalManager" asp-route-id="@release.Id" class="btn btn-sm btn-success">Go to case manager</a>
+                            <button asp-page-handler="HandleDeletion" type="submit" class="btn btn-sm btn-danger">Delete</button>
                         </td>
                     </tr>
                 </form>

@@ -1,0 +1,107 @@
+﻿@page "/admin/approvals/{id}"
+@using Humanizer
+@model OpenModServer.Areas.Admin.Pages.ApprovalManager
+
+<h1>Case Manager</h1>
+<div class="my-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h3>Release info</h3>
+            <div>Name: @Model.Release.Name</div>
+            <div>Mod: @Model.Release.ModListing.Name</div>
+            <div>Type: @Model.Release.ReleaseType</div>
+        </div>
+        <div class="col">
+            <h3>Submitted by</h3>
+            <div class="mb-3 border rounded p-2 d-flex flex-row">
+                <img class="rounded" src="@($"https://www.gravatar.com/avatar/{Model.Release.ModListing.Creator.GenerateMd5EmailHash()}")" width="50px" height="50px"/>
+                <div class="d-flex flex-column ms-2">
+                    <a asp-area="Users" asp-page="/User" asp-route-id="@Model.Release.ModListing?.CreatorId">@Model.Release.ModListing?.Creator.UserName</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Changelog</h3>
+            <div>@Model.Release.Changelog</div>
+        </div>
+        <div class="col">
+            <h3>Download</h3>
+            <div><a href="#">@Model.Release.FileName</a> (@Model.Release.FileSizeKilobytes KB)</div>
+            <div>VirusTotal scan result: <span class="text-success">PASS 72/72</span></div>
+            <div class="text-muted">@Model.Release.FilePath</div>
+        </div>
+    </div>
+</div>
+<div>
+    <h3>Approval history</h3>
+    @if(Model.Release.ApprovalHistory.Any())
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>State</th>
+                <th>Responsible</th>
+                <th style="width:400px;">Stated reason</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var history in Model.Release.ApprovalHistory.OrderByDescending(d => d.CreatedAt))
+            {
+                <tr>
+                    <td>@history.CreatedAt (@history.CreatedAt.Humanize())</td>
+                    <td>@if (history.IsPrivateNote)
+                        {
+                            <span>Private note</span>
+                        }
+                        else
+                        {
+                            <span>@history.PreviousStatus.Humanize() to @history.CurrentState.Humanize()</span>
+                        }</td>
+                    <td>@(history.ModeratorResponsible?.UserName ?? "Unknown")</td>
+                    <td>@history.Reason</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div>No history recorded</div>
+    }
+    <button class="btn btn-secondary">Add private note</button>
+    <div class="text-muted">Private notes are only visible to approval moderators.</div>
+</div>
+<div class="mt-4">
+    <h3>Actions</h3>
+    <div class="d-flex flex-row">
+        <div class="mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">Primary</h5>
+                <h6 class="card-subtitle mb-3 text-muted">Use these actions to approve or reject releases.</h6>
+                <button class="btn btn-success">Approve</button>
+                <button class="btn btn-danger">Reject</button>
+            </div>
+        </div>
+        <div class="mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">Pending</h5>
+                <h6 class="card-subtitle mb-3 text-muted">Use these actions to delay approval while waiting for more information from the submitter.</h6>
+                <button class="btn btn-info">Request more information</button>
+                <button class="btn btn-secondary">Set to pending</button>
+            </div>
+        </div>
+        <div class="mb-3 card">
+            <div class="card-body">
+            <h5 class="card-title">Deletion</h5>
+            <h6 class="card-subtitle mb-3 text-muted">Only use these actions for violations of the User Agreement.</h6>
+    
+            <button class="btn btn-warning">Delete</button>
+            <button class="btn btn-outline-danger">Delete and ban submitter</button>
+        
+            </div>
+        </div>
+    </div>
+</div>
