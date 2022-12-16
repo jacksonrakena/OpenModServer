@@ -376,6 +376,10 @@ namespace OpenModServer.Migrations
                     b.Property<int>("CurrentState")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsPrivateNote")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_private_note");
+
                     b.Property<Guid>("ModReleaseId")
                         .HasColumnType("uuid")
                         .HasColumnName("mod_release_id");
