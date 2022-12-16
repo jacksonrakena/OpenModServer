@@ -34,20 +34,8 @@
                 @foreach (var listing in group)
                 {
                     <div class="col">
-                            <div class="card h-100">
-                                <img height="100px" src="https://d.lu.je/avatar/255950165200994307" class="card-img-top" alt="...">
-                                <a asp-area="Mods" asp-page="/Index" asp-route-id="@listing.Id" style="text-decoration: none; color: unset" class="card-body stretched-link">
-                                    <h5 class="card-title">@listing.Name</h5>
-                                    <p class="card-text">@listing.Tagline</p>
-                                    <div>
-                                        @foreach (var tag in listing.Tags)
-                                        {
-                                            <span class="badge bg-primary">@tag</span>
-                                        }
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
+                        @await Component.InvokeAsync("ListingCard", listing)
+                    </div>
                 }         
             </div>
         </div>
@@ -65,7 +53,7 @@ else
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-area="Mods" asp-page="/Index" asp-route-id="">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">@game.Name</a></li>
+            <li class="breadcrumb-item"><a asp-area="Games" asp-page="Index" asp-route-id="@game.Identifier">@game.Name</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.Listing.Name</li>
         </ol>
     </nav>

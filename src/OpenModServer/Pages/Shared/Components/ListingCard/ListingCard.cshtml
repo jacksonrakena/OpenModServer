@@ -1,0 +1,16 @@
+﻿@model OpenModServer.Data.ModListing
+
+
+    <div class="card h-100">
+        <img height="100px" src="https://d.lu.je/avatar/255950165200994307" class="card-img-top" alt="...">
+        <a asp-area="Mods" asp-page="/Index" asp-route-id="@Model.Id" style="text-decoration: none; color: unset" class="card-body stretched-link">
+            <h5 class="card-title">@Model.Name</h5>
+            <p class="card-text">@Model.Tagline</p>
+            <div>
+                @foreach (var tag in Model.Tags)
+                {
+                    <span class="badge bg-primary">@tag</span>
+                }
+            </div>
+        </a>
+    </div>

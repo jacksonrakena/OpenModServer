@@ -29,13 +29,17 @@
 </div>
 <div style="margin-top: 20px;" class="container">
     <div class="mb-3">
-    <h3>Releases</h3>
-    <ul>
-        @foreach (var mod in Model.Mods)
-        {
-            <li><a asp-area="Mods" asp-page="/Index" asp-route-id="@mod.Id">@mod.Name</a> (for @GameManager.Resolve(mod.GameIdentifier).Name)</li>
-        }
-    </ul>
+    <h3>Latest releases</h3>
+        <ul>
+            <div class="mt-1 row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var mod in Model.Mods)
+            {
+                <div class="col">
+                     @await Component.InvokeAsync("ListingCard", mod)
+                </div>
+            }
+            </div>
+        </ul>
 </div>
 <div class="mb-3">
     <h3>Latest comments</h3>
