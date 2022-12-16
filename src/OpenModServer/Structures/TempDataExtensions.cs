@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
+using OpenModServer.Areas.Identity;
 
 namespace OpenModServer.Structures;
 
@@ -29,5 +31,18 @@ public static class TempDataExtensions
         object o;
         tempData.TryGetValue(key, out o);
         return o == null ? null : JsonConvert.DeserializeObject<T>((string)o);
+    }
+
+    public static AuthorizationOptions AddPermissionPolicy(this AuthorizationOptions authorization,
+        Permissions permission)
+    {
+        authorization
+            .AddPolicy(permission.ToString("G"), auth =>
+            {
+                auth.RequireAssertion(ctx =>
+                    ctx.User.HasClaim("Permission", permission.ToString("G")) ||
+                    ctx.User.HasClaim("Permission", Permissions.Administrator.ToString("G")));
+            });
+        return authorization;
     }
 }

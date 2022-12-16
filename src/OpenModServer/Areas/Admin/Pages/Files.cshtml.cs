@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using OpenModServer.Areas.Identity;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
 using OpenModServer.Data.Releases;
@@ -11,7 +12,7 @@ using OpenModServer.Services;
 
 namespace OpenModServer.Areas.Admin.Pages;
 
-[Authorize(Roles = "Administrator,ApprovalModerator")]
+[Authorize(Policy=nameof(Permissions.ApproveReleases))]
 public class Files : PageModel
 {
     public List<ModRelease> Releases { get; set; }

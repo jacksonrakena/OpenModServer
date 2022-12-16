@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using OpenModServer.Areas.Identity;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
 using OpenModServer.Data.Releases.Approvals;
@@ -9,7 +10,7 @@ using OpenModServer.Services;
 
 namespace OpenModServer.Areas.Admin.Pages;
 
-[Authorize(Roles = "Administrator,ApprovalModerator")]
+[Authorize(Policy = nameof(Permissions.ApproveReleases))]
 public class ModerationActions : PageModel
 {
     public List<ModReleaseApprovalChange> Changes { get; set; }
