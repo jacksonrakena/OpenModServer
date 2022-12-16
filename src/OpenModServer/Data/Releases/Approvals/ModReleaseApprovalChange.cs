@@ -18,7 +18,10 @@ public class ModReleaseApprovalChange
     
     public ModReleaseApprovalStatus PreviousStatus { get; set; }
     public ModReleaseApprovalStatus CurrentState { get; set; }
-    
+
+    [Column("is_private_note")]
+    public bool IsPrivateNote { get; set; } = false;
+
     public string Reason { get; set; }
     
     /// <summary>

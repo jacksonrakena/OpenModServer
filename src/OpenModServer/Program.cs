@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using OpenModServer.Areas.Identity;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
 using OpenModServer.Games;
@@ -37,6 +38,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 // Add services for file management
 builder.Services.AddSingleton<FileManagerService>();
 
+
 // Bind OmsConfig to the relevant configuration
 builder.Services.Configure<OmsConfig>(builder.Configuration.GetSection("OpenModServer"));
 // This is done so you don't have to inject IOptions<OmsConfig>, because I'm lazy
@@ -60,13 +62,24 @@ builder.Services.AddRazorPages();
 
 // Initialise identity, and auth services
 builder.Services
-    .AddDefaultIdentity<OmsUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultIdentity<OmsUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+    })
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddSingleton<CountryService>();
 
+// Add default authentication policies
 var authentication = builder.Services.AddAuthentication();
+builder.Services.AddAuthorization(auth =>
+{
+    auth.AddPermissionPolicy(Permissions.ManageUsers);
+    auth.AddPermissionPolicy(Permissions.Administrator);
+    auth.AddPermissionPolicy(Permissions.ApproveReleases);
+    auth.AddPermissionPolicy(Permissions.ManageListings);
+});
 
 // Initialise external auth providers
 var discordConfig = builder.Configuration.GetSection("OpenModServer").GetSection("ExternalAuthentication").GetSection("Discord");
