@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Areas.Mods.Pages;
 using OpenModServer.Data;
+using OpenModServer.Data.Comments;
 using OpenModServer.Data.Identity;
 using OpenModServer.Structures;
 
@@ -12,6 +13,7 @@ public class UserModel : PageModel
 {
     public OmsUser User { get; set; }
     public List<ModListing> Mods { get; set; }
+    public List<ModComment> Comments { get; set; }
     private readonly ApplicationDbContext _database;
     private readonly ILogger<UserModel> _logger;
     public UserModel(ILogger<UserModel> logger, ApplicationDbContext database)
@@ -27,6 +29,7 @@ public class UserModel : PageModel
         if (user == null) return NotFound();
         User = user;
         Mods = await _database.ModListings.Where(d => d.CreatorId == guid).ToListAsync();
+        Comments = await _database.Comments.Include(d => d.Listing).Where(d => d.AuthorId == guid).Take(20).ToListAsync();
         return Page();
     }
 }

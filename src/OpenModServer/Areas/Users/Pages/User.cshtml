@@ -1,6 +1,9 @@
 ﻿@page "/users/{id}"
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OpenModServer.Games
 @using OpenModServer.Services
+@using Westwind.AspNetCore.Markdown
 @model OpenModServer.Areas.Users.Pages.UserModel
 @inject GameManager GameManager
 @inject CountryService CountryService
@@ -23,12 +26,33 @@
         </div>
     </div>
 </div>
-<div>
-    <h3>Mods</h3>
+<div style="margin-top: 20px;" class="container">
+    <div class="mb-3">
+    <h3>Releases</h3>
     <ul>
         @foreach (var mod in Model.Mods)
         {
-            <li>@mod.Name (for @GameManager.Resolve(mod.GameIdentifier).Name)</li>
+            <li><a asp-area="Mods" asp-page="/Index" asp-route-id="@mod.Id">@mod.Name</a> (for @GameManager.Resolve(mod.GameIdentifier).Name)</li>
         }
     </ul>
+</div>
+<div class="mb-3">
+    <h3>Latest comments</h3>
+    <ul>
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="d-flex flex-row border rounded p-2 mb-2">
+                <img class="rounded" src="@($"https://www.gravatar.com/avatar/{comment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@comment.Author.UserName"/>
+                <div class="ms-2">
+                    <div class="d-flex flex-row">
+                        <a class="comment-author-title" asp-route-id="@comment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
+                            @comment.Author.UserName
+                        </a>
+                    </div>
+                    <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(comment.Content)))</div>
+                </div>
+            </div>
+        }
+    </ul>
+</div>
 </div>
