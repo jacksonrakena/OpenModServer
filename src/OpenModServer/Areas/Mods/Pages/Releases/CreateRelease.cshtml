@@ -1,4 +1,5 @@
 ﻿@page "/mods/{mod_id}/releases/create"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OpenModServer.Data.Releases
 @model OpenModServer.Areas.Mods.Pages.Releases.CreateRelease
 
@@ -13,13 +14,13 @@
         </div>
         <div class="mb-3">
             <label asp-for="Type" class="form-label"></label>
-            <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<ModReleaseType>()">
+            <select class="form-select" asp-for="Type" asp-items="Html.GetEnumSelectList<ModReleaseType>()">
             </select>
             <span asp-validation-for="Type" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="Changelog" class="form-label"></label>
-            <textarea asp-for="Changelog" class="form-control"></textarea>
+            <textarea style="height:200px" asp-for="Changelog" class="form-control"></textarea>
             <span asp-validation-for="Changelog" class="text-danger"></span>
         </div>
         <div class="mb-3">
@@ -39,6 +40,28 @@
         </div>
         <div class="mb-3">
             <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+        <div class="mb-3">
+            <div class="card">
+              <h5 class="card-header">Release Rules</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Do NOT upload any items that match the following criteria:</h5>
+                    <p class="card-text">
+                        <ul>
+                            <li>Files that are not <code>.zip</code> (ZIP) archives</li>
+                            <li>Files you do not own the rights to, including but not limited to, derivative works or parts of other works</li>
+                            <li>Any files that infringe on the copyright holders of original title(s)</li>
+                            <li>Any files that can be used to cheat in an online game or service</li>
+                            <li>Any files that violate the law in your jurisdiction or the juridiction of OMS (New Zealand)</li>
+                            <li>Any files that contain viruses, malware, or other unexpected or potentially unwanted programs</li>
+                            <li>Any files that break the User Agreement</li>
+                        </ul>
+                    </p>
+                </div>
+                <div class="card-footer text-muted">
+                    Your release will be deleted without notice if it breaks one of these rules.
+                </div>
+            </div>
         </div>
     </form>
 </div>

@@ -19,6 +19,7 @@ public class CreateRelease : PageModel
 {
     [BindProperty]
     [MaxLength(64), Required]
+    [Display(Prompt = "The version. For example, '1.0'")]
     public string Name { get; set; }
     
     [BindProperty]
@@ -28,6 +29,7 @@ public class CreateRelease : PageModel
     [BindProperty]
     [MaxLength(2048)]
     [Required]
+    [Display(Prompt = "Use this section to talk about the changes in this version.")]
     public string Changelog { get; set; }
     
     [BindProperty]
