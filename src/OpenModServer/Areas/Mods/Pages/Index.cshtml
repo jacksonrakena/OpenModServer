@@ -13,6 +13,7 @@
 @inject SignInManager<OmsUser> SignInManager
 @inject UserManager<OmsUser> UserManager
 
+
 <style>
     .card:hover {
         background-color: #f5f5f5;
@@ -27,26 +28,57 @@
 
     foreach (var group in Model.ModListings)
     {
-        <h3>@(GameManager.Resolve(group.Key)?.Name ?? group.Key)</h3>
-        @foreach (var listing in group)
-        {
-            <a 
-                asp-area="Mods" asp-page="/Index" asp-route-id="@listing.Id" 
-                class="card" style="text-decoration: none; color: unset; margin-bottom: 20px; display: flex; flex-direction: column; border-radius: 5px; padding: 20px; border:  1px solid black;">
-                <div><span style="font-weight:bold; font-size: large;">@listing.Name</span> by @listing.Creator?.UserName</div>
-                <div>@listing.Tagline</div>
-            </a>
-        }
+        <div class="mb-4">
+            <h3>@(GameManager.Resolve(group.Key)?.Name ?? group.Key)</h3>
+            <div class="mt-1 row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var listing in group)
+                {
+                    <div class="col">
+                            <div class="card h-100">
+                                <img height="100px" src="https://d.lu.je/avatar/255950165200994307" class="card-img-top" alt="...">
+                                <a asp-area="Mods" asp-page="/Index" asp-route-id="@listing.Id" style="text-decoration: none; color: unset" class="card-body stretched-link">
+                                    <h5 class="card-title">@listing.Name</h5>
+                                    <p class="card-text">@listing.Tagline</p>
+                                    <div>
+                                        @foreach (var tag in listing.Tags)
+                                        {
+                                            <span class="badge bg-primary">@tag</span>
+                                        }
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                }         
+            </div>
+        </div>
     }   
 }
 else
 {
+    var isPublishable = GameManager.Resolve(Model.Listing.GameIdentifier) is IPublishable publisher;
     ViewData["Title"] = Model.Listing.Name;
     var game = GameManager.Resolve(Model.Listing!.GameIdentifier);
     var isOwner = SignInManager.IsSignedIn(User) && SignInManager.UserManager.GetUserId(User) == Model.Listing?.CreatorId.ToString();
     var isOwnerOrAdmin = isOwner;
-        <h2>@Model.Listing?.Name</h2>
-
+    
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="Mods" asp-page="/Index" asp-route-id="">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">@game.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Listing.Name</li>
+        </ol>
+    </nav>
+    
+    <h2>@Model.Listing?.Name</h2>
+                            
+    <div>
+        Tags:
+        @foreach (var tag in Model.Listing.Tags)
+        {
+            <a asp-area="Mods" asp-page="/Tags/ViewTag" asp-route-id="@tag" class="badge bg-primary">@tag</a>
+        }
+    </div>
 
     var latestProductionApprovedRelease = Model.Listing?.Releases
         .OrderByDescending(d => d.CreatedAt)
@@ -62,47 +94,64 @@ else
     
     <div style="margin-top: 20px;" class="container">
         <div class="row">
-            <div class="col-4">
-                <div class="border rounded p-2 d-flex flex-row">
+            <div class="mb-3 col-sm-4">
+                <div class="mb-3 border rounded p-2 d-flex flex-row">
                     <img class="rounded" src="@($"https://www.gravatar.com/avatar/{Model.Listing.Creator.GenerateMd5EmailHash()}")" width="50px" height="50px" />
-                    <a class="ms-2" asp-area="Users" asp-page="/User" asp-route-id="@Model.Listing?.CreatorId">@Model.Listing?.Creator.UserName</a>
+                    <div class="d-flex flex-column ms-2">
+                        <a asp-area="Users" asp-page="/User" asp-route-id="@Model.Listing?.CreatorId">@Model.Listing?.Creator.UserName</a>
+                        <div>@Model.ModsMadeByAuthor mods</div>
+                    </div>
                 </div>
-                <h3>Releases</h3>
                 <div>
-                    @foreach (var release in Model.Listing?.Releases.OrderByDescending(d => d.CreatedAt))
-                    {
-                        <div class="rounded border mb-2 p-2">
-                            <div class="d-flex flex-row justify-content-between">
-                                <div>
-                                    <div>@release.Name (@release.ReleaseType)</div>
-                                    <div class="fs-6">@release.DownloadCount downloads, @release.FileSizeKilobytes KB</div>
-                                    <div class="fs-6">@release.CreatedAt.Humanize(null, DateTime.Now)</div>
-                                </div>
-                                <div>
-                                    @if (release.CurrentStatus == ModReleaseApprovalStatus.Approved)
-                                    {
-                                        <div><a asp-area="Downloads" asp-controller="Download" asp-action="DownloadReleaseById" asp-route-id="@release.Id">Download</a></div>
-                                    }
+                    <h3>Releases</h3>
+                    <div>
+                        @foreach (var release in Model.Listing?.Releases.OrderByDescending(d => d.CreatedAt))
+                        {
+                            <div class="rounded border mb-2 p-2">
+                                <div class="d-flex flex-row justify-content-between">
+                                    <div>
+                                        <div><span style="font-size: large; font-weight: bold;">@release.Name</span> (@release.ReleaseType)</div>
+                                        <div style="font-size:small">@release.DownloadCount downloads, @release.FileSizeKilobytes KB</div>
+                                        <div style="font-size:small">@release.CreatedAt.Humanize(null, DateTime.Now)</div>
+                                    </div>
+                                    <div>
+                                        @if (release.CurrentStatus == ModReleaseApprovalStatus.Approved)
+                                        {
+                                            <div><a asp-area="Downloads" asp-controller="Download" asp-action="DownloadReleaseById" asp-route-id="@release.Id">Download</a></div>
+                                        }
+                                        else
+                                        {
+                                            <span>Awaiting approval</span>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
-                @if (isOwner)
-                {
-                    <div style="margin-top: 20px;">
-                        <a asp-route-mod_id="@Model.Listing?.Id.ToString()" asp-area="Mods" asp-page="/Releases/CreateRelease" class="btn btn-info">Create new release</a>
+                        }
+                        @if (isOwner)
+                        {
+                            <a style="text-decoration: none; color: unset;" class="card"  asp-route-mod_id="@Model.Listing?.Id.ToString()" asp-area="Mods" asp-page="/Releases/CreateRelease">
+                                <div class="card-body text-center">
+                                    Create new release
+                                </div>
+                            </a>
+                        }
                     </div>
-                }
+                </div>
             </div>
-            <div class="col-8">
+            <div class="col-sm-8">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#description">Description</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#comments">Comments</a>
+                        <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#comments">Comments (@Model.Listing.Comments.Count)</a>
                     </li>
+                    @if (isPublishable)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#installation">Installation guide</a>
+                        </li>
+                    }
                 </ul>
                 <div class="tab-content mt-3" id="tab-content">
                     <div class="tab-pane fade show active" id="description">
@@ -165,27 +214,23 @@ else
                             }
                         }
                     </div>
+                    @if (isPublishable)
+                    {
+                        var url = GameManager.GeneratePublisherUrl(game, Model.HttpContext);
+                        
+                        <div class="tab-pane fade " id="installation">
+                            <div>
+                                Add the following URL to your plugin sources:
+                                <br/>
+                                <code>
+                                    @url
+                                </code>
+                                <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('@url')">Copy</button>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-
     </div>
-
-@if (GameManager.Resolve(Model.Listing.GameIdentifier) is IPublishable publishable)
-{
-    <div style="margin-top: 20px;">
-        @{
-            var url = GameManager.GeneratePublisherUrl(game, Model.HttpContext);
-        }
-        <h3>How to install</h3>
-        <div>
-            Add the following URL to your plugin sources:
-            <br/>
-            <code>
-                @url
-            </code>
-            <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('@url')">Copy</button>
-        </div>
-    </div>    
-}
 }

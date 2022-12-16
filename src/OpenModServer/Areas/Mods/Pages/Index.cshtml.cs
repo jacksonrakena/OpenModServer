@@ -17,6 +17,7 @@ public class ViewAllModsModel : PageModel
     private readonly UserManager<OmsUser> _userManager;
 
     public ModListing? Listing { get; set; }
+    public int ModsMadeByAuthor { get; set; }
 
     public ViewAllModsModel(ILogger<ViewAllModsModel> logger, ApplicationDbContext database, UserManager<OmsUser> user)
     {
@@ -34,8 +35,12 @@ public class ViewAllModsModel : PageModel
                 .Include(d => d.Releases)
                 .Include(c => c.Comments)
                 .FirstOrDefaultAsync(d => d.Id == modId);
+            
+            
             if (query == null) return NotFound();
             Listing = query;
+            ModsMadeByAuthor = await _database.ModListings.Where(d => d.CreatorId == Listing.CreatorId).CountAsync();
+            
             return Page();
         }
         
