@@ -1,6 +1,7 @@
 ﻿@using System.Security.Cryptography
 @using System.Text
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OpenModServer.Data.Identity
 @inject SignInManager<OmsUser> SignInManager
 @inject UserManager<OmsUser> UserManager
@@ -37,6 +38,8 @@
                         <li><a class="dropdown-item" asp-area="Admin" asp-page="/ModerationActions">View actions</a></li>
                         <li><a class="dropdown-item" asp-area="Admin" asp-page="/Mods">View mods</a></li>
                         <li><a class="dropdown-item" asp-area="Admin" asp-page="/Users">View users</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" asp-area="Admin" asp-page="/Status">Server status</a></li>
                     </ul>
                 </div>
             </li>

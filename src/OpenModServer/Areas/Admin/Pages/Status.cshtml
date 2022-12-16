@@ -1,0 +1,103 @@
+﻿@page
+@using System.Diagnostics
+@using System.Diagnostics.Tracing
+@using System.Reflection
+@using Microsoft.EntityFrameworkCore
+@using OpenModServer.Data
+@model OpenModServer.Areas.Admin.Pages.Status
+@inject ApplicationDbContext DbContext
+
+@{
+    var users = await DbContext.Users.CountAsync();
+    var mods = await DbContext.ModListings.CountAsync();
+    var releases = await DbContext.ModReleases.CountAsync();
+    var comments = await DbContext.Comments.CountAsync();
+    var approvalChangeEvents = await DbContext.ApprovalChanges.CountAsync();
+}
+<div class="mb-3">
+    <h3>Database information</h3>
+     <table class="table">
+         <tr>
+             <th>User count</th>
+             <td>@users</td>
+         </tr>
+         <tr>
+             <th>Mod count</th>
+             <td>@mods</td>
+         </tr>
+         <tr>
+             <th>Release count</th>
+             <td>@releases</td>
+         </tr>
+         <tr>
+             <th>Comment count</th>
+             <td>@comments</td>
+         </tr>
+         <tr>
+              <th>Approval status change event count</th>
+             <td>@approvalChangeEvents</td>
+         
+         <tr>
+             <th>Total tracked database rows</th>
+             <td>@(users+mods+releases+comments+approvalChangeEvents) (excluding untracked Identity rows)</td>
+         </tr>
+     </table>
+</div>
+<div style="margin-top:30px;">
+    <h3>Server process information</h3>
+    @{
+        using var proc = Process.GetCurrentProcess();
+        <table class="table">
+            <tr>
+                <th>CPU usage</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Runtime version</th>
+                <td>@Environment.Version</td>
+            </tr>
+            <tr>
+                <th>Start time</th>
+                <td>@proc.StartTime.ToString("s")</td>
+            </tr>
+            <tr>
+                <th>Request ID</th>
+                <td>@Request.HttpContext.TraceIdentifier</td>
+            </tr>
+            <tr>
+                <th>OMS version</th>
+                <td>@Assembly.GetEntryAssembly()?.FullName</td>
+            </tr>
+            <tr>
+                <th>Server</th>
+                <td>@Environment.MachineName (@Environment.OSVersion, tc64=@Environment.TickCount64)</td>
+            </tr>
+            <tr>
+                <th>Process</th>
+                <td>@Environment.ProcessPath (@Environment.ProcessId)</td>
+            </tr>
+            <tr>
+                <th>OS threads</th>
+                <td>@proc.Threads.Count</td>
+            </tr>
+            <tr>
+                <th>Memory</th>
+                <td>@(Environment.WorkingSet / 1000000) MB physical working set &bull; @(proc.PrivateMemorySize64 / 1000000) MB private</td>
+            </tr>
+            <tr>
+                <th>Database</th>
+                <td>@DbContext.Database.ProviderName (Supported=@DbContext.Database.IsNpgsql())</td>
+            </tr>
+            <tr>
+                <th>Loaded assemblies</th>
+                <td>
+                    @AppDomain.CurrentDomain.GetAssemblies().Length<br/>
+                    @foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        <span>@assembly.GetName().Name, Version=@assembly.GetName().Version <br/></span>
+                    }
+                </td>
+            </tr>
+        </table>
+    }
+</div>
