@@ -26,10 +26,9 @@ OpenModServer (OMS) is a new project aimed at creating an omnibus mod/plug-in di
 **Distribution**
 - [x] Mod downloads over HTTP
 - [x] Dynamic publishers (Dalamud plugin source)
-- [ ] Appearance overhaul
 
 **Community**
-- [ ] Comments on mods
+- [x] Comments on mods
 - [ ] User forum
   
 **Long-term:**
