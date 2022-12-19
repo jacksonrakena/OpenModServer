@@ -5,11 +5,21 @@ public class OmsConfig
     public OmsConfigKeys Keys { get; set; }
     public OmsConfigPaths Paths { get; set; }
     public OmsConfigBranding Branding { get; set; }
+    
+    public OmsConfigEmailSettings Email { get; set; }
+}
+
+public class OmsConfigEmailSettings
+{
+    public string Provider { get; set; }
+    public string FromName { get; set; }
+    public string FromAddress { get; set; }
 }
 
 public class OmsConfigKeys
 {
     public string VirusTotal { get; set; }
+    public string? SendGrid { get; set; }
 }
 
 public class OmsConfigPaths
@@ -21,7 +31,7 @@ public class OmsConfigPaths
 
 public class OmsConfigBranding
 {
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }
 
 public class OmsConfigExternalAuthentication

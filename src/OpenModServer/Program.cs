@@ -1,14 +1,17 @@
+using System.Globalization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using OpenModServer.Areas.Identity;
+using OpenModServer.Areas.Account;
+using OpenModServer.Areas.Games;
+using OpenModServer.Areas.Games.Builtin;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
-using OpenModServer.Games;
-using OpenModServer.Games.Builtin;
 using OpenModServer.Services;
+using OpenModServer.Services.Safety;
 using OpenModServer.Structures;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +28,7 @@ builder.Services.AddDbContext<ApplicationDbContext>((services, database) =>
 {
     database.UseNpgsql(connectionString);
     database.UseMemoryCache(services.GetRequiredService<IMemoryCache>());
+    database.UseSnakeCaseNamingConvention(CultureInfo.InvariantCulture);
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -50,11 +54,28 @@ builder.Services.Configure<RouteOptions>(options =>
     options.LowercaseUrls = true;
 });
 
+// Initialise email sender
+var provider = builder.Configuration.GetSection("OpenModServer").GetSection("Email")["Provider"];
+switch (provider)
+{
+    case "SendGrid":
+        builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
+        break;
+    default:
+        throw new InvalidOperationException(
+            "An invalid provider for Email.Provider was configured.");
+}
+
 // Initialise game manager and supported titles
 var gameManager = new GameManager();
 gameManager.Register(new FinalFantasyXIVOnline());
 gameManager.Register(new GrandTheftAutoV());
 builder.Services.AddSingleton(gameManager);
+
+// Initialise file scanning
+builder.Services.AddHttpClient();
+builder.Services.AddHostedService<ExternalScanningBackgroundService>();
+builder.Services.AddSingleton<ExternalScanningService>();
 
 // Initialise controllers and Razor Pages
 builder.Services.AddControllersWithViews();
@@ -62,11 +83,14 @@ builder.Services.AddRazorPages();
 
 // Initialise identity, and auth services
 builder.Services
-    .AddDefaultIdentity<OmsUser>(options =>
+    .AddIdentity<OmsUser, OmsRole>(options =>
     {
         options.SignIn.RequireConfirmedAccount = true;
+        options.Stores.MaxLengthForKeys = 128;
+        options.User.RequireUniqueEmail = true;
+        options.SignIn.RequireConfirmedEmail = true;
     })
-    .AddRoles<IdentityRole<Guid>>()
+    .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddSingleton<CountryService>();
@@ -82,7 +106,10 @@ builder.Services.AddAuthorization(auth =>
 });
 
 // Initialise external auth providers
-var discordConfig = builder.Configuration.GetSection("OpenModServer").GetSection("ExternalAuthentication").GetSection("Discord");
+var discordConfig = builder.Configuration
+    .GetSection("OpenModServer")
+    .GetSection("ExternalAuthentication")
+    .GetSection("Discord");
 if (discordConfig.Exists())
 {
     authentication.AddDiscord(discord =>
@@ -103,6 +130,7 @@ app.UseForwardedHeaders();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
