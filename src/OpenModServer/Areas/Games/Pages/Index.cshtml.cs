@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using OpenModServer.Areas.Games.Capabilities;
 using OpenModServer.Data;
-using OpenModServer.Games;
-using OpenModServer.Games.Capabilities;
 
 namespace OpenModServer.Areas.Games.Pages;
 

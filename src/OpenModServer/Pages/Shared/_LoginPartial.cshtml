@@ -2,10 +2,12 @@
 @using System.Text
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OpenModServer.Areas.Account
 @using OpenModServer.Data.Identity
+@using OpenModServer.Structures
 @inject SignInManager<OmsUser> SignInManager
 @inject UserManager<OmsUser> UserManager
-@inject RoleManager<IdentityRole<Guid>> RoleManager
+@inject RoleManager<OmsRole> RoleManager
 
 @{
     string GetHashedEmail(string email)
@@ -26,7 +28,10 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        @if (User.IsInRole("Administrator") || User.IsInRole("ApprovalModerator"))
+        @if (User.HasPermission(Permissions.ManageUsers) 
+             || User.HasPermission(Permissions.ManageListings) 
+             || User.HasPermission(Permissions.ApproveReleases)
+            || User.HasPermission(Permissions.Administrator))
         {
             <li class="nav-item d-flex align-items-center" style="margin-right:10px;">
                 <div class="dropdown">
@@ -34,12 +39,31 @@
                         Admin
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                        <li><a class="dropdown-item" asp-area="Admin" asp-page="/Files">View releases</a></li>
-                        <li><a class="dropdown-item" asp-area="Admin" asp-page="/ModerationActions">View actions</a></li>
-                        <li><a class="dropdown-item" asp-area="Admin" asp-page="/Mods">View mods</a></li>
-                        <li><a class="dropdown-item" asp-area="Admin" asp-page="/Users">View users</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" asp-area="Admin" asp-page="/Status">Server status</a></li>
+                        @if (User.HasPermission(Permissions.ApproveReleases))
+                        {
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Listings</h6></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-page="/Files">Release approval queue</a></li>
+                            @if (User.HasPermission(Permissions.ManageListings))
+                            {
+                                <li><a class="dropdown-item" asp-area="Admin" asp-page="/Mods">View mods</a></li>
+                            }
+                        }
+                        @if (User.HasPermission(Permissions.ManageUsers))
+                        {
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Community</h6></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-page="/Users">All users</a></li>
+                            <li><a class="dropdown-item" href="#">User reports</a></li>
+                            <li><a class="dropdown-item" href="#">All comments</a></li>
+                        }
+                        @if (User.HasPermission(Permissions.Administrator))
+                        {
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Site administration</h6></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-page="/ModerationActions">Moderation log</a></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-page="/Status">Server status</a></li>   
+                        }
                     </ul>
                 </div>
             </li>
@@ -56,11 +80,11 @@
               </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" asp-area="Mods" asp-page="/CreateMod">Create new mod</a></li>
-                    <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My account</a></li>
+                    <li><a class="dropdown-item" asp-area="Account" asp-page="/Manage/Index" title="Manage">My account</a></li>
                     <li><a class="dropdown-item" asp-area="Users" asp-page="/User" asp-route-id=@user.Id>My profile</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                        <form class="form-inline" asp-area="Account" asp-page="/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
                             <button type="submit" class="dropdown-item">Logout</button>
                         </form>
                     </li>
@@ -71,10 +95,10 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link text-white" asp-area="Account" asp-page="/Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link text-white" asp-area="Account" asp-page="/Login">Login</a>
         </li>
     }
 </ul>

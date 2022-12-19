@@ -1,6 +1,6 @@
-﻿using OpenModServer.Games.Capabilities;
+﻿using OpenModServer.Areas.Games.Capabilities;
 
-namespace OpenModServer.Games.Builtin;
+namespace OpenModServer.Areas.Games.Builtin;
 
 public class GrandTheftAutoV : ISupportedGame
 {

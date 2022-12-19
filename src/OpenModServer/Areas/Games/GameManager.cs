@@ -1,6 +1,6 @@
-﻿using OpenModServer.Games.Capabilities;
+﻿using OpenModServer.Areas.Games.Capabilities;
 
-namespace OpenModServer.Games;
+namespace OpenModServer.Areas.Games;
 
 public class GameManager
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OpenModServer.Areas.Identity;
+using OpenModServer.Areas.Account;
 
 namespace OpenModServer.Areas.Admin.Pages;
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OpenModServer.Areas.Identity;
+using OpenModServer.Areas.Account;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
 using OpenModServer.Data.Releases;
@@ -34,10 +34,10 @@ public class Users : PageModel
 
     private readonly UserManager<OmsUser> _userManager;
     private readonly FileManagerService _fileManagerService;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly RoleManager<OmsRole> _roleManager;
 
     public Users(ApplicationDbContext context, FileManagerService fileManagerService, UserManager<OmsUser> userManager,
-        RoleManager<IdentityRole<Guid>> roleManager)
+        RoleManager<OmsRole> roleManager)
     {
         _database = context;
         _userManager = userManager;
@@ -56,7 +56,7 @@ public class Users : PageModel
 
     public async Task<IActionResult> OnPostHandleRoleCreateAsync()
     {
-        var role = new IdentityRole<Guid>
+        var role = new OmsRole
         {
             Name = RoleName,
         };

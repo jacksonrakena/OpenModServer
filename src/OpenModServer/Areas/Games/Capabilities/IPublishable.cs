@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace OpenModServer.Games.Capabilities;
+namespace OpenModServer.Areas.Games.Capabilities;
 
 public interface IPublishable
 {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using OpenModServer.Areas.Identity;
+using OpenModServer.Areas.Account;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
 using OpenModServer.Data.Releases.Approvals;

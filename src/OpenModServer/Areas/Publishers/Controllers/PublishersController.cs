@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OpenModServer.Games;
-using OpenModServer.Games.Capabilities;
+using OpenModServer.Areas.Games;
+using OpenModServer.Areas.Games.Capabilities;
 
 namespace OpenModServer.Areas.Publishers.Controllers;
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Areas.Mods.Pages;
@@ -14,12 +16,15 @@ public class UserModel : PageModel
     public OmsUser User { get; set; }
     public List<ModListing> Mods { get; set; }
     public List<ModComment> Comments { get; set; }
+    public IList<Claim> Claims { get; set; }
     private readonly ApplicationDbContext _database;
     private readonly ILogger<UserModel> _logger;
-    public UserModel(ILogger<UserModel> logger, ApplicationDbContext database)
+    private readonly UserManager<OmsUser> _userManager;
+    public UserModel(ILogger<UserModel> logger, ApplicationDbContext database, UserManager<OmsUser> users)
     {
         _database = database;
         _logger = logger;
+        _userManager = users;
     }
     public async Task<IActionResult> OnGet()
     {
@@ -28,6 +33,10 @@ public class UserModel : PageModel
             .FirstOrDefaultAsync(d => d.Id == guid);
         if (user == null) return NotFound();
         User = user;
+
+        Claims = await _userManager.GetClaimsAsync(User);
+        Console.WriteLine(Claims.Count);
+        
         Mods = await _database.ModListings.Where(d => d.CreatorId == guid).ToListAsync();
         Comments = await _database.Comments
             .OrderByDescending(d => d.CreatedAt)

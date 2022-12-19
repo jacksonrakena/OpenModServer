@@ -10,6 +10,7 @@ using OpenModServer.Data.Identity;
 using OpenModServer.Data.Releases;
 using OpenModServer.Data.Releases.Approvals;
 using OpenModServer.Services;
+using OpenModServer.Services.Safety;
 using OpenModServer.Structures;
 
 namespace OpenModServer.Areas.Mods.Pages.Releases;
@@ -44,9 +45,14 @@ public class CreateRelease : PageModel
     private readonly FileManagerService _fileManager;
     private readonly ApplicationDbContext _database;
     private readonly UserManager<OmsUser> _userManager;
+    private readonly ExternalScanningService _externalScanningService;
 
-    public CreateRelease(FileManagerService fileManager, ApplicationDbContext context, UserManager<OmsUser> manager)
+    public CreateRelease(FileManagerService fileManager, 
+        ApplicationDbContext context, 
+        UserManager<OmsUser> manager,
+        ExternalScanningService externalScanningService)
     {
+        _externalScanningService = externalScanningService;
         _database = context;
         _fileManager = fileManager;
         _userManager = manager;
@@ -84,7 +90,11 @@ public class CreateRelease : PageModel
                 };
                 _database.ModReleases.Add(release);
                 await _database.SaveChangesAsync();
-                TempData.PutJson("Alert", new TemporaryAlert(TemporaryAlertType.Success,
+                
+                await _externalScanningService.EnqueueReleaseForScanningAsync(release);
+                Console.WriteLine(release.VT_AnalysisId);
+                
+                this.SetAlert(new TemporaryAlert(TemporaryAlertType.Success,
                     "Release created",
                     "Congratulations on posting a new release. Once approved, it will be available for users to download."));
                 return RedirectToPage($"/Index", new { id = modId, area="Mods"});

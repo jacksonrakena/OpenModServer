@@ -1,4 +1,4 @@
-﻿@using OpenModServer.Games
+﻿@using OpenModServer.Areas.Games
 @using OpenModServer.Structures
 @inject IConfiguration config
 @inject GameManager GameManager
@@ -60,7 +60,7 @@
                             <ul class="dropdown-menu">
                                 @foreach (var game in GameManager.Games())
                                 {
-                                    <li><a class="dropdown-item" asp-area="Games" asp-page="Index" asp-route-id="@game.Identifier">@game.Name</a></li>
+                                    <li><a class="dropdown-item" asp-area="Games" asp-page="/Index" asp-route-id="@game.Identifier">@game.Name</a></li>
                                 }
                             </ul>
                         </div>
@@ -73,7 +73,7 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3">
-        @if (TempData.GetJson<TemporaryAlert>("Alert") is { } tempAlert)
+        @if (this.GetAlert() is { } tempAlert)
         {
             <div class="@($"alert alert-{tempAlert.Type.ToString("F").ToLower()}")" role="alert">
                 <h4 class="alert-heading">@tempAlert.Name</h4>
@@ -86,7 +86,7 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2022  @name &mdash; This page generated at @DateTime.Now.ToUniversalTime().ToString("R") &mdash; <a href="https://github.com/jacksonrakena/openmodserver">View source</a>
+        &copy; 2022 @name &mdash; <a href="https://github.com/jacksonrakena/openmodserver">View source</a>
     </div>
 </footer>
 

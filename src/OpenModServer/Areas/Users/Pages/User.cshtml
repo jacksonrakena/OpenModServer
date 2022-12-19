@@ -2,8 +2,10 @@
 @using Humanizer
 @using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using OpenModServer.Games
+@using OpenModServer.Areas.Account
+@using OpenModServer.Areas.Games
 @using OpenModServer.Services
+@using OpenModServer.Structures
 @using Westwind.AspNetCore.Markdown
 @model OpenModServer.Areas.Users.Pages.UserModel
 @inject GameManager GameManager
@@ -15,15 +17,23 @@
     <img src=@($"https://gravatar.com/avatar/{Model.User.GenerateMd5EmailHash()}") />
     <div class="m-4">
         <h2>@Model.User.UserName</h2>
-        <div class="d-flex flex-row">
-            @if (!string.IsNullOrWhiteSpace(Model.User.City))
-            {
-                <span>@Model.User.City</span>
-            }
-            @if (!string.IsNullOrWhiteSpace(Model.User.CountryIsoCode))
-            {
-                <span>, @CountryService.CountriesByIsoCode[Model.User.CountryIsoCode].Name</span>
-            }
+        <div class="d-flex flex-column">
+            <div class="d-flex flex-row">
+                @if (!string.IsNullOrWhiteSpace(Model.User.City))
+                {
+                    <span>@Model.User.City</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.User.CountryIsoCode))
+                {
+                    <span>, @CountryService.CountriesByIsoCode[Model.User.CountryIsoCode].Name</span>
+                }
+            </div>
+            <div class="d-flex flex-row">
+                @if (Model.Claims.HasPermission(Permissions.Administrator))
+                {
+                    <span class="badge bg-primary">Admin</span>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -35,7 +45,7 @@
             @foreach (var mod in Model.Mods)
             {
                 <div class="col">
-                     @await Component.InvokeAsync("ListingCard", mod)
+                    @await Component.InvokeAsync("ListingCard", mod)
                 </div>
             }
             </div>

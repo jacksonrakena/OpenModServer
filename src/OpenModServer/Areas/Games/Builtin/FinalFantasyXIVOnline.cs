@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenModServer.Areas.Games.Capabilities;
 using OpenModServer.Data;
 using OpenModServer.Data.Releases;
 using OpenModServer.Data.Releases.Approvals;
-using OpenModServer.Games.Capabilities;
 
-namespace OpenModServer.Games.Builtin;
+namespace OpenModServer.Areas.Games.Builtin;
 
 public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
 {

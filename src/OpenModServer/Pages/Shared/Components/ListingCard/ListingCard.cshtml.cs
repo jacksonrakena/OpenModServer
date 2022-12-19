@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenModServer.Data;
 
-namespace OpenModServer.Pages.Components;
+namespace OpenModServer.Pages.Shared.Components.ListingCard;
 
 public class ListingCard : ViewComponent
 {
