@@ -32,20 +32,28 @@
         <div class="col">
             <h3>Download</h3>
             <div><a asp-area="Downloads" asp-controller="Download" asp-action="DownloadCaseManagerFile" asp-route-id="@Model.Release.Id">@Model.Release.FileName</a> (@Model.Release.FileSizeKilobytes KB)</div>
-            <div>VirusTotal scan result: <span class="text-success">PASS 72/72</span></div>
-            <div class="text-muted">@Model.Release.FilePath</div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h3>Scanning results</h3>
-            <div>Last updated: @(Model.Release.VT_LastUpdatedAt?.Humanize() ?? "None")</div>
-            <div>Analysis ID: @Model.Release.VT_AnalysisId</div>
-            <div>Status: @(Model.Release.VT_ScanResult?.Humanize())</div>
-            @if (Model.Release.VT_ScanResult != null && Model.Release.VT_ScanResult != VirusTotalScanStatus.WaitingOnVirusTotalToComplete)
-            {
-                <div>Result: @Model.Release.VT_NumberOfHarmlessScans harmless/undetected, @Model.Release.VT_NumberOfMaliciousScans malicious, @Model.Release.VT_NumberOfSuspiciousScans suspicious, @Model.Release.VT_NumberOfFailedScans failed</div>
-            }
+            <div>VirusTotal scan result: 
+                @{
+                    switch (Model.Release.VT_ScanResult)
+                    {
+                        case VirusTotalScanStatus.WaitingOnVirusTotalToComplete:
+                            <span class="text-info">Waiting</span>
+                            break;
+                        case VirusTotalScanStatus.Clean:
+                            <span class="text-success">Clean</span>
+                            break;
+                        case VirusTotalScanStatus.Dirty:
+                            <span class="text-danger">@Model.Release.VT_NumberOfMaliciousScans malicious,  @Model.Release.VT_NumberOfSuspiciousScans suspicious</span>
+                            break;
+                        case null:
+                            <span class="text-primary">Not submitted</span>
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            </div>
+            <div class="text-muted">Last VT update: @(Model.Release.VT_LastUpdatedAt?.Humanize())</div>
         </div>
     </div>
 </div>
