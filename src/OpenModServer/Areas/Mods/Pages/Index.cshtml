@@ -167,31 +167,32 @@ else
                     </div>
                     <div class="tab-pane fade " id="comments">
 
-                        @if (Model.Listing.Comments.FirstOrDefault(d => d.Id == Model.Listing.PinnedCommentId) is {} pinnedComment)
-                        {
-                            <div class="d-flex flex-row border border-success rounded p-2 mb-3">
-                                <img class="rounded" src="@($"https://www.gravatar.com/avatar/{pinnedComment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@pinnedComment.Author.UserName"/>
-                                <div class="ms-2 w-100">
-                                    <div class="d-flex flex-row justify-content-between">
-                                        <div>
-                                            <a class="comment-author-title" asp-route-id="@pinnedComment.AuthorId.ToString()" asp-area="Users" asp-page="/User">
-                                                @pinnedComment.Author.UserName
-                                            </a>
-                                            <span class="ms-2 badge bg-success">Pinned</span>
-                                            @if (pinnedComment.AuthorId == Model.Listing.CreatorId)
-                                            {
-                                                <span class="ms-2 badge bg-info">Author</span>
-                                            }
-                                        </div>
-                                        <div class="text-muted">
-                                            @pinnedComment.CreatedAt.Humanize()
-                                        </div>
-                                    </div>
-                                    <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(pinnedComment.Content)))</div>
-                                </div>
-                            </div>
-                        }
-                        @foreach (var comment in Model.Listing.Comments.Where(d => d.Id != Model.Listing.PinnedCommentId))
+                        @* @if (Model.Listing.Comments.FirstOrDefault(d => d.Id == Model.Listing.PinnedCommentId) is {} pinnedComment) *@
+                        @* { *@
+                        @*     <div class="d-flex flex-row border border-success rounded p-2 mb-3"> *@
+                        @*         <img class="rounded" src="@($"https://www.gravatar.com/avatar/{pinnedComment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@pinnedComment.Author.UserName"/> *@
+                        @*         <div class="ms-2 w-100"> *@
+                        @*             <div class="d-flex flex-row justify-content-between"> *@
+                        @*                 <div> *@
+                        @*                     <a class="comment-author-title" asp-route-id="@pinnedComment.AuthorId.ToString()" asp-area="Users" asp-page="/User"> *@
+                        @*                         @pinnedComment.Author.UserName *@
+                        @*                     </a> *@
+                        @*                     <span class="ms-2 badge bg-success">Pinned</span> *@
+                        @*                     @if (pinnedComment.AuthorId == Model.Listing.CreatorId) *@
+                        @*                     { *@
+                        @*                         <span class="ms-2 badge bg-info">Author</span> *@
+                        @*                     } *@
+                        @*                 </div> *@
+                        @*                 <div class="text-muted"> *@
+                        @*                     @pinnedComment.CreatedAt.Humanize() *@
+                        @*                 </div> *@
+                        @*             </div> *@
+                        @*             <div>@(new HtmlString(new MarkdownParserMarkdig().Parse(pinnedComment.Content)))</div> *@
+                        @*         </div> *@
+                        @*     </div> *@
+                        @* } *@
+                        @* @foreach (var comment in Model.Listing.Comments.Where(d => d.Id != Model.Listing.PinnedCommentId)) *@
+                        @foreach (var comment in Model.Listing.Comments)
                         {
                             <div class="d-flex flex-row border rounded p-2 mb-2">
                                 <img class="rounded" src="@($"https://www.gravatar.com/avatar/{comment.Author.GenerateMd5EmailHash()}")" height="50px" width="50px" alt="@comment.Author.UserName"/>

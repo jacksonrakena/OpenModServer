@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenModServer.Data;
@@ -13,9 +14,11 @@ using OpenModServer.Data;
 namespace OpenModServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221219072509_AddGameMetadata")]
+    partial class AddGameMetadata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -399,7 +402,7 @@ namespace OpenModServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("jsonb")
                         .HasColumnName("game_metadata")
-                        .HasDefaultValueSql("'{}'");
+                        .HasDefaultValueSql("{}");
 
                     b.Property<bool>("IsVisibleToPublic")
                         .HasColumnType("boolean")

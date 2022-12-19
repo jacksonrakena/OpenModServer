@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using OpenModServer.Data.Comments;
 using OpenModServer.Data.Identity;
@@ -48,12 +50,10 @@ public class ModListing
     public List<ModRelease> Releases { get; set; }
     
     public List<ModComment> Comments { get; set; }
-    
-    
-    public Guid? PinnedComment { get; set; }
-    
-    public Guid? PinnedCommentId { get; set; }
-    
+
     [Column("tags")]
     public List<string> Tags { get; set; } = new List<string>();
+
+    [Column(TypeName="jsonb")]
+    public JsonNode GameMetadata { get; set; } = new JsonObject();
 }

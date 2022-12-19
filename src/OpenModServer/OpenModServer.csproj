@@ -46,34 +46,6 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </Content>
-      <Content Update="appsettings.secret.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\Components\ListingCard.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\ChangePassword.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\DeletePersonalData.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\Disable2fa.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\DownloadPersonalData.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\Email.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\EnableAuthenticator.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\ExternalLogins.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\GenerateRecoveryCodes.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\Index.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\PersonalData.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\ResetAuthenticator.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\SetPassword.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\ShowRecoveryCodes.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\TwoFactorAuthentication.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\_Layout.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\_ManageNav.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\_StatusMessage.cshtml" />
-      <AdditionalFiles Include="Areas\Account\Pages\Manage\_ViewImports.cshtml" />
     </ItemGroup>
 
 </Project>

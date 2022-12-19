@@ -1,0 +1,17 @@
+﻿@page
+@using OpenModServer.Areas.Games
+@inject GameManager GameManager
+<div>
+    <h3>Upload a new mod</h3>
+    <div>
+        Select the game your mod is for:
+    </div>
+    @foreach (var game in GameManager.Games())
+    {
+        <div class="card">
+            <a class="card-body stretched-link" asp-area="Mods" asp-route-game="@game.Identifier" asp-page="/Create/Details">
+                <div class="card-title">@game.Name</div>
+            </a>
+        </div>
+    }
+</div>

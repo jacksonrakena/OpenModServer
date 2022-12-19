@@ -8,13 +8,30 @@ using OpenModServer.Data.Releases.Approvals;
 
 namespace OpenModServer.Areas.Games.Builtin;
 
-public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
+public class FinalFantasyXIVOnline : ISupportedGame, IPublishable, IMetadataCarrier
 {
     public string Identifier => "ff14d";
-    public string Name => "Final Fantasy XIV Online (Dalamud)";
+    public string Name => "Final Fantasy XIV Online";
 
     public string Description =>
         "Final Fantasy XIV is a massively multiplayer online role-playing game (MMORPG) developed and published by Square Enix.";
+
+    public void BuildMetadataFields(MetadataFieldCollectionBuilder builder)
+    {
+        builder.AddField("assembly-name", MetadataFieldType.SingleLineText, assemblyName =>
+        {
+            assemblyName.Name = "Assembly name";
+            assemblyName.Placeholder = "The name of your .NET assembly.";
+        });
+        builder.AddField("is-r18", MetadataFieldType.Boolean, r18 =>
+        {
+            r18.Name = "Does this mod contain materials considered explicit or pornographic in nature?";
+        });
+        builder.AddField("is-texture", MetadataFieldType.Boolean, texture =>
+        {
+            texture.Name = "Is this mod a texture or resource mod? (TexTools, Penumbra, etc..)";
+        });
+    }
 
     public async Task<IActionResult> GetPublisherAsync(HttpContext context)
     {
@@ -44,7 +61,7 @@ public class FinalFantasyXIVOnline : ISupportedGame, IPublishable
                 Name = d.Name,
                 Description = d.Description,
                 Punchline = d.Tagline,
-                InternalName = d.Name,
+                InternalName = d.GameMetadata?["assembly-name"]?.GetValue<string>() ?? d.Name,
                 AssemblyVersion = latestProduction.Name,
                 RepoUrl = linkGenerator.GetUriByPage(context, "/Index", null, new{id=d.Id,Area="Mods"}),
                 Changelog = latestProduction.Changelog,

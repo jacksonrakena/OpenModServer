@@ -37,7 +37,8 @@ public class ApplicationDbContext : IdentityDbContext<OmsUser, IdentityRole<Guid
             .WithMany(d => d.Releases)
             .OnDelete(DeleteBehavior.Cascade);
         builder.Entity<ModReleaseApprovalChange>().Property(b => b.CreatedAt).HasDefaultValueSql("now()");
-        
+        builder.Entity<ModListing>().Property(d => d.GameMetadata).HasDefaultValueSql("{}");
+        builder.Entity<ModComment>().HasOne(d => d.Listing).WithMany(e => e.Comments);
         // rename ASP.NET Identity tables
         builder.Entity<OmsRole>().ToTable("roles");
         builder.Entity<IdentityRole<Guid>>().ToTable("roles");
