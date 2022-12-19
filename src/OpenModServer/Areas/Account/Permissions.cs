@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace OpenModServer.Areas.Identity;
+namespace OpenModServer.Areas.Account;
 
 public enum Permissions
 {
