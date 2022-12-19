@@ -30,6 +30,7 @@ builder.Services.AddDbContext<ApplicationDbContext>((services, database) =>
     database.UseMemoryCache(services.GetRequiredService<IMemoryCache>());
     database.UseSnakeCaseNamingConvention(CultureInfo.InvariantCulture);
 });
+builder.Services.AddCoreAdmin();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -142,6 +143,13 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseCoreAdminCustomAuth(services => 
+    Task.FromResult(
+        services.GetRequiredService<IHttpContextAccessor>()
+            .HttpContext
+            .User
+            .HasClaim("Permission", Permissions.Administrator.ToString("G"))));
+app.UseCoreAdminCustomTitle("OMS Database");
 
 app.MapRazorPages();
 app.MapControllers();
