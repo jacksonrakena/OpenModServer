@@ -26,7 +26,7 @@ public class ViewTag : PageModel
         if (string.IsNullOrWhiteSpace(name)) return NotFound();
 
         Name = name;
-        ModListings = await _database.ModListings.Where(m => m.Tags.Contains(Name)).Take(20)
+        ModListings = await _database.ModListings.Where(m => m.Tags.Contains(Name) && m.IsVisibleToPublic).Take(20)
             .GroupBy(d => d.GameIdentifier).ToListAsync();
 
         return Page();

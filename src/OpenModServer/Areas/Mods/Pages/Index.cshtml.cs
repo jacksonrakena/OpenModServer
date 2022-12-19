@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using OpenModServer.Areas.Account;
 using OpenModServer.Data;
 using OpenModServer.Data.Comments;
 using OpenModServer.Data.Identity;
@@ -35,16 +36,26 @@ public class ViewAllModsModel : PageModel
                 .Include(d => d.Releases)
                 .Include(c => c.Comments)
                 .FirstOrDefaultAsync(d => d.Id == modId);
-            
-            
+
+
             if (query == null) return NotFound();
             Listing = query;
             ModsMadeByAuthor = await _database.ModListings.Where(d => d.CreatorId == Listing.CreatorId).CountAsync();
-            
+
+            if (!Listing.IsVisibleToPublic)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return NotFound();
+                if (Listing.CreatorId != user.Id &&
+                    !User.HasClaim("Permission", Permissions.ManageListings.ToString("G")))
+                    return NotFound();
+            }
+
             return Page();
         }
         
         ModListings = await _database.ModListings
+            .Where(c => c.IsVisibleToPublic)
             .Include(e => e.Creator)
             .OrderByDescending(t => t.DownloadCount)
             .Take(50)

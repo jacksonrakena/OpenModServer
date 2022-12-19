@@ -11,21 +11,21 @@
 @inject GameManager GameManager
 @inject CountryService CountryService
 @{
-    ViewData["Title"] = Model.User.UserName;
+    ViewData["Title"] = Model.ProfiledUser.UserName;
 }
 <div class="d-flex align-items-center">
-    <img src=@($"https://gravatar.com/avatar/{Model.User.GenerateMd5EmailHash()}") />
+    <img src=@($"https://gravatar.com/avatar/{Model.ProfiledUser.GenerateMd5EmailHash()}") />
     <div class="m-4">
-        <h2>@Model.User.UserName</h2>
+        <h2>@Model.ProfiledUser.UserName</h2>
         <div class="d-flex flex-column">
             <div class="d-flex flex-row">
-                @if (!string.IsNullOrWhiteSpace(Model.User.City))
+                @if (!string.IsNullOrWhiteSpace(Model.ProfiledUser.City))
                 {
-                    <span>@Model.User.City</span>
+                    <span>@Model.ProfiledUser.City</span>
                 }
-                @if (!string.IsNullOrWhiteSpace(Model.User.CountryIsoCode))
+                @if (!string.IsNullOrWhiteSpace(Model.ProfiledUser.CountryIsoCode))
                 {
-                    <span>, @CountryService.CountriesByIsoCode[Model.User.CountryIsoCode].Name</span>
+                    <span>, @CountryService.CountriesByIsoCode[Model.ProfiledUser.CountryIsoCode].Name</span>
                 }
             </div>
             <div class="d-flex flex-row">

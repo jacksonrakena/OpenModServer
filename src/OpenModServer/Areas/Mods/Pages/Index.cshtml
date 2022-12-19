@@ -68,6 +68,15 @@ else
         </ol>
     </nav>
     
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Awaiting approval</h4>
+        <p>
+            This mod is awaiting approval. <br />
+            It is not visible to the public or listed in the mod lists.
+        </p>
+        <hr>
+        <p class="mb-0">You must submit a first release before a moderator can approve this mod.</p>
+    </div>  
     <h2>@Model.Listing?.Name</h2>
                             
     <div>
@@ -77,6 +86,7 @@ else
             <a asp-area="Mods" asp-page="/Tags/ViewTag" asp-route-id="@tag" class="badge bg-primary">@tag</a>
         }
     </div>
+    
 
     var latestProductionApprovedRelease = Model.Listing?.Releases
         .OrderByDescending(d => d.CreatedAt)

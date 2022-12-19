@@ -13,7 +13,7 @@ namespace OpenModServer.Areas.Users.Pages;
 
 public class UserModel : PageModel
 {
-    public OmsUser User { get; set; }
+    public OmsUser ProfiledUser { get; set; }
     public List<ModListing> Mods { get; set; }
     public List<ModComment> Comments { get; set; }
     public IList<Claim> Claims { get; set; }
@@ -32,12 +32,14 @@ public class UserModel : PageModel
         var user = await _database.Users
             .FirstOrDefaultAsync(d => d.Id == guid);
         if (user == null) return NotFound();
-        User = user;
+        ProfiledUser = user;
+        var loggedInUser = await _userManager.GetUserAsync(User);
+        var id = loggedInUser?.Id;
 
-        Claims = await _userManager.GetClaimsAsync(User);
-        Console.WriteLine(Claims.Count);
+        Claims = await _userManager.GetClaimsAsync(ProfiledUser);
         
-        Mods = await _database.ModListings.Where(d => d.CreatorId == guid).ToListAsync();
+        
+        Mods = await _database.ModListings.Where(d => d.CreatorId == guid && (d.IsVisibleToPublic || d.CreatorId == id)).ToListAsync();
         Comments = await _database.Comments
             .OrderByDescending(d => d.CreatedAt)
             .Include(d => d.Listing)

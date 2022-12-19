@@ -41,6 +41,8 @@ public class ModListing
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
+    public bool IsVisibleToPublic { get; set; } = false;
+
     [Column("download_count")] public int DownloadCount { get; set; } = 0;
     
     public List<ModRelease> Releases { get; set; }
