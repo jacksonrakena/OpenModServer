@@ -8,11 +8,13 @@
 @using OpenModServer.Areas.Games.Capabilities
 @using OpenModServer.Data.Identity
 @using OpenModServer.Data.Releases.Approvals
+@using OpenModServer.Structures
 @using Westwind.AspNetCore.Markdown
 @model OpenModServer.Areas.Mods.Pages.ViewAllModsModel
 @inject SignInManager<OmsUser> SignInManager
 @inject UserManager<OmsUser> UserManager
-
+@inject OmsConfig Config
+@inject LinkGenerator LinkGenerator
 
 <style>
     .card:hover {
@@ -49,6 +51,14 @@ else
     var isOwner = SignInManager.IsSignedIn(User) && SignInManager.UserManager.GetUserId(User) == Model.Listing?.CreatorId.ToString();
     var isOwnerOrAdmin = isOwner;
     
+    @section Head {
+        <meta property="og:title" content="@Model.Listing.Name">
+        <meta property="og:site_name" content="@Config.Branding.Name">
+        <meta property="og:url" content="@LinkGenerator.GetUriByPage(Model.HttpContext, "Index", values: new { Area="mods", id = Model.Listing.Id })">
+        <meta property="og:description" content="@Model.Listing.Tagline">
+        <meta property="og:type" content="object">
+        <meta property="og:image" content="">
+    }
     
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
