@@ -5,7 +5,7 @@
     }
     else
     {
-        //Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+        Layout = "/Pages/Shared/_Layout.cshtml";
     }
 }
 
@@ -23,7 +23,4 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    @RenderSection("Scripts", required: false)
-}
+@await RenderSectionAsync("Scripts", required: false)
