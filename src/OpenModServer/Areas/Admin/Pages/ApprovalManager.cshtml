@@ -3,6 +3,8 @@
 @model OpenModServer.Areas.Admin.Pages.ApprovalManager
 
 <h1>Case Manager</h1>
+<form method="post">
+<input type="hidden" name="id" value="@Model.Release.Id" />
 <div class="my-4">
     <div class="row mb-3">
         <div class="col">
@@ -28,7 +30,7 @@
         </div>
         <div class="col">
             <h3>Download</h3>
-            <div><a href="#">@Model.Release.FileName</a> (@Model.Release.FileSizeKilobytes KB)</div>
+            <div><a asp-area="Downloads" asp-controller="Download" asp-action="DownloadCaseManagerFile" asp-route-id="@Model.Release.Id">@Model.Release.FileName</a> (@Model.Release.FileSizeKilobytes KB)</div>
             <div>VirusTotal scan result: <span class="text-success">PASS 72/72</span></div>
             <div class="text-muted">@Model.Release.FilePath</div>
         </div>
@@ -81,27 +83,27 @@
             <div class="card-body">
                 <h5 class="card-title">Primary</h5>
                 <h6 class="card-subtitle mb-3 text-muted">Use these actions to approve or reject releases.</h6>
-                <button class="btn btn-success">Approve</button>
-                <button class="btn btn-danger">Reject</button>
+                <button asp-page-handler="HandleApproval" type="submit" class="btn btn-success">Approve</button>
+                <button asp-page-handler="HandleRejection" type="submit" class="btn btn-danger">Reject</button>
             </div>
         </div>
         <div class="mb-3 card">
             <div class="card-body">
                 <h5 class="card-title">Pending</h5>
                 <h6 class="card-subtitle mb-3 text-muted">Use these actions to delay approval while waiting for more information from the submitter.</h6>
-                <button class="btn btn-info">Request more information</button>
-                <button class="btn btn-secondary">Set to pending</button>
+                <button asp-page-handler="HandleRequestInformation" class="btn btn-info">Request more information</button>
+                <button asp-page-handler="HandlePending" class="btn btn-secondary">Set to pending</button>
             </div>
         </div>
         <div class="mb-3 card">
             <div class="card-body">
-            <h5 class="card-title">Deletion</h5>
-            <h6 class="card-subtitle mb-3 text-muted">Only use these actions for violations of the User Agreement.</h6>
-    
-            <button class="btn btn-warning">Delete</button>
-            <button class="btn btn-outline-danger">Delete and ban submitter</button>
-        
+                <h5 class="card-title">Deletion</h5>
+                <h6 class="card-subtitle mb-3 text-muted">Only use these actions for violations of the User Agreement.</h6>
+
+                <button asp-page-handler="HandleDeletion" class="btn btn-warning">Delete</button>
+                <button class="btn disabled btn-outline-danger">Delete and ban submitter</button>
             </div>
         </div>
     </div>
 </div>
+</form>

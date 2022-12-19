@@ -68,15 +68,18 @@ else
         </ol>
     </nav>
     
-    <div class="alert alert-warning" role="alert">
-        <h4 class="alert-heading">Awaiting approval</h4>
-        <p>
-            This mod is awaiting approval. <br />
-            It is not visible to the public or listed in the mod lists.
-        </p>
-        <hr>
-        <p class="mb-0">You must submit a first release before a moderator can approve this mod.</p>
-    </div>  
+    @if (!Model.Listing.IsVisibleToPublic)
+    {
+        <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">Awaiting approval</h4>
+            <p>
+                This mod is awaiting approval. <br />
+                It is not visible to the public or listed in the mod lists.
+            </p>
+            <hr>
+            <p class="mb-0">You must submit a first release before a moderator can approve this mod.</p>
+        </div>     
+    }
     <h2>@Model.Listing?.Name</h2>
                             
     <div>

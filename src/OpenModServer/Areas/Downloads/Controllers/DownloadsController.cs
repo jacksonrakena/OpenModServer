@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenModServer.Areas.Account;
 using OpenModServer.Data;
 using OpenModServer.Data.Releases.Approvals;
 
@@ -27,6 +29,22 @@ public class DownloadController : Controller
         release.DownloadCount++;
         release.ModListing.DownloadCount++;
         _ = _database.SaveChangesAsync();
+        var stream = System.IO.File.OpenRead(release.FilePath);
+        return new FileStreamResult(stream, "application/octet-stream")
+        { 
+            LastModified = release.CreatedAt,
+            FileDownloadName = release.FileName
+        };
+    }
+
+    [HttpGet("casemanager/files/{id}")]
+    [Authorize(Policy=nameof(Permissions.ApproveReleases))]
+    public async Task<IActionResult> DownloadCaseManagerFile([FromRoute] string id)
+    {
+        if (!Guid.TryParse(id, out var guid)) return BadRequest();
+        var release = await _database.ModReleases
+            .FirstOrDefaultAsync(r => r.Id == guid);
+        if (release == null) return NotFound();
         var stream = System.IO.File.OpenRead(release.FilePath);
         return new FileStreamResult(stream, "application/octet-stream")
         { 

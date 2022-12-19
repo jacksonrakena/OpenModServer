@@ -7,6 +7,7 @@ using OpenModServer.Areas.Account;
 using OpenModServer.Data;
 using OpenModServer.Data.Identity;
 using OpenModServer.Data.Releases;
+using OpenModServer.Data.Releases.Approvals;
 using OpenModServer.Services;
 
 namespace OpenModServer.Areas.Admin.Pages;
@@ -47,5 +48,55 @@ public class ApprovalManager : PageModel
         }
 
         return ErrorRedirect();
+    }
+
+    public async Task<IActionResult> HandleStateChangeAsync(string id, ModReleaseApprovalStatus newStatus)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null || !Guid.TryParse(id, out var releaseId)) return RedirectToPage();
+        var release = await _database.ModReleases
+            .Include(c =>c.ApprovalHistory)
+            .Include(d => d.ModListing)
+            .FirstOrDefaultAsync(d => d.Id == releaseId);
+        if (release == null) return RedirectToPage();
+
+        release.ModListing.IsVisibleToPublic = newStatus == ModReleaseApprovalStatus.Approved;
+        var originalState = release.CurrentStatus;
+        release.CurrentStatus = newStatus;
+        release.ApprovalHistory.Add(new ModReleaseApprovalChange
+        {
+            ModeratorResponsibleId = user.Id,
+            Reason = "Actioned in Case Manager",
+            CurrentState = newStatus,
+            PreviousStatus = originalState
+        });
+
+        await _database.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostHandleApprovalAsync(string id)
+    {
+        return await HandleStateChangeAsync(id, ModReleaseApprovalStatus.Approved);
+    }
+    
+    public async Task<IActionResult> OnPostHandleRejectionAsync(string id)
+    {
+        return await HandleStateChangeAsync(id, ModReleaseApprovalStatus.DeniedByModerator);
+    }
+    
+    public async Task<IActionResult> OnPostHandleDeletionAsync(string id)
+    {
+        if (!Guid.TryParse(id, out var releaseId)) return RedirectToPage();
+        var release = await _database.ModReleases.FirstOrDefaultAsync(d => d.Id == releaseId);
+        if (release == null) return RedirectToPage();
+        _database.ModReleases.Remove(release);
+
+        await _fileManagerService.DeleteModReleaseAsync(release);
+
+        await _database.SaveChangesAsync();
+        
+        return RedirectToPage();
     }
 }
