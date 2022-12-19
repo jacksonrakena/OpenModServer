@@ -37,5 +37,15 @@ public class ApplicationDbContext : IdentityDbContext<OmsUser, IdentityRole<Guid
             .WithMany(d => d.Releases)
             .OnDelete(DeleteBehavior.Cascade);
         builder.Entity<ModReleaseApprovalChange>().Property(b => b.CreatedAt).HasDefaultValueSql("now()");
+        
+        // rename ASP.NET Identity tables
+        builder.Entity<OmsRole>().ToTable("roles");
+        builder.Entity<IdentityRole<Guid>>().ToTable("roles");
+        builder.Entity<OmsUser>().ToTable("users");
+        builder.Entity<IdentityUserRole<Guid>>().ToTable("user_roles");
+        builder.Entity<IdentityRoleClaim<Guid>>().ToTable("role_claims");
+        builder.Entity<IdentityUserToken<Guid>>().ToTable("user_tokens");
+        builder.Entity<IdentityUserLogin<Guid>>().ToTable("user_logins");
+        builder.Entity<IdentityUserClaim<Guid>>().ToTable("user_claims");
     }
 }
