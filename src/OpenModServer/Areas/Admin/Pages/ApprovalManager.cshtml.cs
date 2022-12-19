@@ -60,7 +60,7 @@ public class ApprovalManager : PageModel
             .FirstOrDefaultAsync(d => d.Id == releaseId);
         if (release == null) return RedirectToPage();
 
-        release.ModListing.IsVisibleToPublic = newStatus == ModReleaseApprovalStatus.Approved;
+        if (newStatus == ModReleaseApprovalStatus.Approved) release.ModListing.IsVisibleToPublic = true;
         var originalState = release.CurrentStatus;
         release.CurrentStatus = newStatus;
         release.ApprovalHistory.Add(new ModReleaseApprovalChange
@@ -85,7 +85,12 @@ public class ApprovalManager : PageModel
     {
         return await HandleStateChangeAsync(id, ModReleaseApprovalStatus.DeniedByModerator);
     }
-    
+
+    public async Task<IActionResult> OnPostHandleRequestInformationAsync(string id)
+    {
+        return await HandleStateChangeAsync(id, ModReleaseApprovalStatus.NeedMoreInformation);
+    }
+
     public async Task<IActionResult> OnPostHandleDeletionAsync(string id)
     {
         if (!Guid.TryParse(id, out var releaseId)) return RedirectToPage();

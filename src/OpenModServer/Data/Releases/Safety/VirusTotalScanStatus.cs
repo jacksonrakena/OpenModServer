@@ -1,10 +1,13 @@
-﻿namespace OpenModServer.Data.Releases.Safety;
+﻿using System.ComponentModel;
+
+namespace OpenModServer.Data.Releases.Safety;
 
 public enum VirusTotalScanStatus
 {
     /// <summary>
     ///     OMS is waiting on VirusTotal to finish the analysis of this release.
     /// </summary>
+    [Description("Waiting on VirusTotal scan")]
     WaitingOnVirusTotalToComplete,
     
     /// <summary>

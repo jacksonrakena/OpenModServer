@@ -13,7 +13,7 @@ namespace OpenModServer.Services.Safety;
 /// </summary>
 public partial class ExternalScanningBackgroundService : BackgroundService
 {
-    private readonly TimeSpan _runDelay = TimeSpan.FromMinutes(5);
+    private readonly TimeSpan _runDelay = TimeSpan.FromMinutes(2);
     
     
     private readonly IServiceProvider _provider;
@@ -35,27 +35,8 @@ public partial class ExternalScanningBackgroundService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await ExecuteIterationAsync(stoppingToken);
+            await _externalScanningService.ExecuteIterationAsync(stoppingToken);
             await Task.Delay(_runDelay, stoppingToken);
         }
-    }
-
-    private async Task ExecuteIterationAsync(CancellationToken cancellationToken)
-    {
-        using var operationScope = _provider.CreateScope();
-        var services = operationScope.ServiceProvider;
-        await using var database = services.GetRequiredService<ApplicationDbContext>();
-        
-        // Fetch all stored releases where we're still waiting on a VT result
-        var releases = database.ModReleases
-            .Where(c => c.VT_AnalysisId != null
-                        && c.VT_ScanResult == VirusTotalScanStatus.WaitingOnVirusTotalToComplete);
-
-        foreach (var release in releases)
-        {
-            // Ask VirusTotal for an update
-        }
-
-        await database.SaveChangesAsync(cancellationToken);
     }
 }
