@@ -1,9 +1,11 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Options;
 using OpenModServer.Areas.Account;
 using OpenModServer.Areas.Games;
@@ -57,15 +59,14 @@ builder.Services.Configure<RouteOptions>(options =>
 
 // Initialise email sender
 var provider = builder.Configuration.GetSection("OpenModServer").GetSection("Email")["Provider"];
-switch (provider)
+var providers = new Dictionary<string, Type>()
 {
-    case "SendGrid":
-        builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
-        break;
-    default:
-        throw new InvalidOperationException(
-            "An invalid provider for Email.Provider was configured.");
-}
+    {"SendGrid", typeof(SendGridEmailSender)}
+};
+if (provider == null || !providers.TryGetValue(provider, out var senderType)) throw new InvalidOperationException(
+    "An invalid provider for Email.Provider was configured. Available providers: " + string.Join(", ", providers.Keys)); 
+
+builder.Services.AddTransient(typeof(IEmailSender), senderType);
 
 // Initialise game manager and supported titles
 var gameManager = new GameManager();
@@ -96,6 +97,13 @@ builder.Services
 
 builder.Services.AddSingleton<CountryService>();
 
+builder.Logging.AddSimpleConsole(console =>
+{
+    console.ColorBehavior = LoggerColorBehavior.Enabled;
+    console.SingleLine = true;
+    console.TimestampFormat = "HH:mm:ss ";
+});
+
 // Add default authentication policies
 var authentication = builder.Services.AddAuthentication();
 builder.Services.AddAuthorization(auth =>
@@ -107,27 +115,43 @@ builder.Services.AddAuthorization(auth =>
 });
 
 // Initialise external auth providers
-var discordConfig = builder.Configuration
-    .GetSection("OpenModServer")
-    .GetSection("ExternalAuthentication")
-    .GetSection("Discord");
-if (discordConfig.Exists())
+var providerConfigurationActions = new Dictionary<string, Action<AuthenticationBuilder>>
 {
-    authentication.AddDiscord(discord =>
     {
-        discord.ClientId = discordConfig["ClientId"];
-        discord.ClientSecret = discordConfig["ClientSecret"];
-        discord.Scope.Add("email");
-        discord.CallbackPath = "/signin-discord";
-        discord.CorrelationCookie.SameSite = SameSiteMode.Lax;
-        discord.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
-    });
+        "Discord", auth =>
+        {
+            var discordConfig = builder.Configuration
+                .GetSection("OpenModServer")
+                .GetSection("ExternalAuthentication")
+                .GetSection("Discord");
+            auth.AddDiscord(discord =>
+            {
+                discord.ClientId = discordConfig["ClientId"];
+                discord.ClientSecret = discordConfig["ClientSecret"];
+                discord.Scope.Add("email");
+                discord.CallbackPath = "/signin-discord";
+                discord.CorrelationCookie.SameSite = SameSiteMode.Lax;
+                discord.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
+            });
+        }
+    }
+};
+foreach (var key in builder.Configuration.GetSection("OpenModServer").GetSection("ExternalAuthentication")
+             .GetChildren())
+{
+    if (!providerConfigurationActions.TryGetValue(key.Key, out var configurationAction))
+        throw new InvalidOperationException(
+            $"Unknown external provider {key.Key} configured in ExternalAuthentication settings.");
+    configurationAction(authentication);
 }
 
 
 var app = builder.Build();
+
+// Forward headers from NGINX - required for link generation/proxying to work
 app.UseForwardedHeaders();
-// Configure the HTTP request pipeline.
+
+// Allow easy migration updates in development
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -146,9 +170,9 @@ app.UseAuthorization();
 app.UseCoreAdminCustomAuth(services => 
     Task.FromResult(
         services.GetRequiredService<IHttpContextAccessor>()
-            .HttpContext
+            .HttpContext?
             .User
-            .HasClaim("Permission", Permissions.Administrator.ToString("G"))));
+            .HasPermission(Permissions.Administrator) ?? false));
 app.UseCoreAdminCustomTitle("OMS Database");
 
 app.MapRazorPages();
